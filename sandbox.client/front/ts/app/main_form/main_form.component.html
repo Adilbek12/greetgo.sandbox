@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+<div>
+
+  <div>
+    <div class="topnav">
+      <button (click)="exit.emit()">Выход</button>
+      <button [ngClass]="{active:loadUserInfoButtonEnabled}" (click)="switchBetweenUserAndClient(false)" >Данные пользователя</button>
+      <button [ngClass]="{active:loadClientInfoListButtonEnable}" (click)="switchBetweenUserAndClient(true)" >Данные клентов</button>
+      <button *ngIf="loadClientInfoListButtonEnable" (click)="openAddNewClientModal()">Добавить новый клент</button>
+      <button style="float: right;">Поиск</button>
+      <input type="text" placeholder="Поиск.." (click)="openAddNewClientWindow()">
+    </div>
+    <div *ngIf="loadClientInfoListButtonEnable">
+      <table class="customers">
+        <colgroup>
+          <col>
+          <col>
+          <col>
+          <col>
+          <col>
+          <col>
+          <col>
+        </colgroup>
+        <thead>
+        <tr class="tr-head">
+          <th>Name</th>
+          <th>Surname</th>
+          <th>Age</th>
+          <th>Balance</th>
+          <th>Max balance</th>
+          <th>Min balance</th>
+          <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let client of clientInfoList">
+          <td scope="col">{{client.name}}</td>
+          <td scope="col">{{client.surname}}</td>
+          <td scope="col">{{client.age}}</td>
+          <td scope="col">{{client.balance}}</td>
+          <td scope="col">{{client.minBalance}}</td>
+          <td scope="col">{{client.maxBalance}}</td>
+          <td scope="col"><button class="delete-button" (click)="deleteClientInfoByIndex(client)"><i class="fa fa-trash"></i></button></td>
+        </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="10">
+              <div class="pagination">
+                <li>
+                  <span (click)="paginationPageButtonClicked(currentPage-1)" [hidden]="currentPage <= 1"> &lt; PREV</span>
+                </li>
+                <li>
+                  <span (click)="currentPage = currentPage - 2" [hidden]="currentPage < pagesSize - 2">{{currentPage - 2}}</span>
+                  <span (click)="currentPage = currentPage - 1" [hidden]="currentPage === 1">{{currentPage - 1}}</span>
+                  <span class="active">{{currentPage}}</span>
+                  <span (click)="currentPage = currentPage + 1" [hidden]="currentPage >= pagesSize - 1">{{currentPage + 1}}</span>
+                  <span (click)="currentPage = currentPage + 2" [hidden]="currentPage >= pagesSize - 2">{{currentPage + 2}}</span>
+                  <span (click)="currentPage = currentPage + 3" [hidden]="currentPage !== 0 ">{{currentPage + 4}}</span>
+                </li>
+                <li>
+                  <span (click)="paginationPageButtonClicked(currentPage+1)" [hidden]="currentPage === pagesSize-1">NEXT &gt;</span>
+                </li>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  <div *ngIf="loadUserInfoButtonEnabled">
+
+    <table class="customers">
+      <tbody>
+      <tr>
+        <td>ID</td>
+        <td><b>{{userInfo.id}}</b></td>
+      </tr>
+      <tr>
+        <td>Account name</td>
+        <td><b>{{userInfo.accountName}}</b></td>
+      </tr>
+      <tr>
+        <td>Surname</td>
+        <td><b>{{userInfo.surname}}</b></td>
+      </tr>
+      <tr>
+        <td>Name</td>
+        <td><b>{{userInfo.name}}</b></td>
+      </tr>
+      <tr>
+        <td>Patronymic</td>
+        <td><b>{{userInfo.patronymic}}</b></td>
+      </tr>
+      <tr>
+        <td>Phone type</td>
+        <td><b>{{userInfo.phoneType}}</b></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+  <client-info-form-component></client-info-form-component>
+</div>
+</body>
+</html>

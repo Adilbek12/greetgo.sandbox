@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+  <div class="modal" id="myModal">
+    <div class="modal-content">
+      <div class="container">
+
+        <table style="width:100%">
+          <colgroup>
+            <col>
+            <col>
+          </colgroup>
+          <thead>
+            <tr class="tr-head">
+              <th style="width: 50%"><h1>Новый клиент</h1></th>
+              <th style="width: 50%"></th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr><td colspan="2"><hr></td></tr>
+          <tr>
+            <td colspan="1">
+              <label><b>Фамилия</b><span class="red_star">*</span></label>
+              <input type="text" placeholder="Фамилия" required>
+            </td>
+            <td colspan="1">
+              <label><b>Имя</b><span class="red_star">*</span></label>
+              <input type="text" placeholder="Имя" required>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label><b>Отчество</b></label>
+              <input type="text" placeholder="Отчество" required>
+            </td>
+            <td>
+              <label><b>Пол</b><span class="red_star">*</span></label>
+              <input type="text" placeholder="Пол" required>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label><b>Дата рождения</b><span class="red_star">*</span></label>
+              <input type="date" placeholder="Дата рождения" required>
+            </td>
+            <td>
+              <label><b>Характер</b><span class="red_star">*</span></label>
+              <p style="padding: 10px">
+                <select>
+                  <option disabled>Выбрать</option>
+                  <option value = "Скромный">Скромный</option>
+                  <option value = "Упрямый">Упрямый</option>
+                </select>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label><b>Адрес регистрации</b><span class="red_star">*</span></label>
+              <input type="text" placeholder="Улица" required>
+              <input type="text" placeholder="Дом" required>
+              <input type="text" placeholder="Квартира" required>
+            </td>
+            <td>
+              <label><b>Адрес проживания</b></label>
+              <input type="text" placeholder="Улица" required>
+              <input type="text" placeholder="Дом" required>
+              <input type="text" placeholder="Квартира" required>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <label><b>Телефоны</b><span class="red_star">*</span></label>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input type="tel" placeholder="Домашний" required>
+              <input type="tel" placeholder="Рабочий" required>
+              <input type="tel" placeholder="Мобильный1" required>
+            </td>
+            <td>
+              <input type="tel" placeholder="Мобильный2" required>
+              <input type="tel" placeholder="Мобильный3" required>
+            </td>
+          </tr>
+          </tbody>
+          <tfoot>
+          <tr>
+              <td>
+                <button type="button" class="cancelbtn" (click)="close()">Заткрыть</button>
+              </td>
+              <td>
+                <button type="submit" class="signupbtn">Добавить</button>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

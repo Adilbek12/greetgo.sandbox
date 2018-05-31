@@ -1,0 +1,8 @@
+export enum SortBy {
+  NAME = "NAME",
+  SURNAME = "SURNAME",
+  AGE = "AGE",
+  BALANCE = "BALANCE",
+  MAX_BALANCE = "MAX_BALANCE",
+  MIN_BALANCE = "MIN_BALANCE",
+}
