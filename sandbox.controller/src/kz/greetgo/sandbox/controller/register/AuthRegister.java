@@ -1,11 +1,10 @@
 package kz.greetgo.sandbox.controller.register;
 
-import kz.greetgo.sandbox.controller.model.*;
+import kz.greetgo.sandbox.controller.model.AuthInfo;
+import kz.greetgo.sandbox.controller.model.UserInfo;
 import kz.greetgo.sandbox.controller.register.model.SessionInfo;
 import kz.greetgo.sandbox.controller.register.model.UserParamName;
 import kz.greetgo.sandbox.controller.security.SecurityError;
-
-import java.util.List;
 
 /**
  * Аутентификация, авторизация и работа с сессией
@@ -71,62 +70,4 @@ public interface AuthRegister {
    * @return детальная информация о пользователе
    */
   UserInfo getUserInfo(String personId);
-
-  /**
-   * Предоставляет детальную информацию о клиенте
-   *
-   * @param clientId идентификатор клиента
-   * @return детальная информация о клиенте
-   */
-  ClientInfo getClientInfo(String clientId);
-
-  /**
-   * Предоставляет информацию о всех клиентах
-   *
-   * @return информация о клиентах
-   */
-  List<ClientInfoView> getClientInfoViewList();
-
-  /**
-   * Предоставляет информацию о клиентах от индеска
-   *
-   * @param from   индекс начала
-   * @param to     индекс конца
-   * @return информация о клиентах
-   */
-  List<ClientInfoView> getClientInfoViewList(int from, int to);
-
-
-  /**
-   * Предоставляет общее количество клиентов
-   *
-   * @return количество клиентов
-   */
-  int getTotalClientsNumber();
-
-
-  /**
-   * Изменяет значения параметров клиента
-   *
-   * @param clientInfoEdited измененные данные клиента
-   */
-  void editClientInfo(ClientInfoEdited clientInfoEdited);
-
-  /**
-   * Удалить значения параметров клиента
-   *
-   * @param clientId идентификатор клиента
-   */
-  void removeClientInfo(String clientId);
-
-
-  /**
-   * Предоставляет сортированую информацию о клиентах от индеска
-   *
-   * @param from   индекс начала
-   * @param to     индекс конца
-   * @param sortBy параметр сортировки
-   * @return сортированая информация о клиентах
-   */
-  List<ClientInfoView> getSortedClientInfoViewList (int from, int to, SortBy sortBy);
 }

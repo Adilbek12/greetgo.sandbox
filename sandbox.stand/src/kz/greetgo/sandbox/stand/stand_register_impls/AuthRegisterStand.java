@@ -3,22 +3,18 @@ package kz.greetgo.sandbox.stand.stand_register_impls;
 import kz.greetgo.depinject.core.Bean;
 import kz.greetgo.depinject.core.BeanGetter;
 import kz.greetgo.sandbox.controller.errors.AuthError;
-import kz.greetgo.sandbox.controller.model.*;
+import kz.greetgo.sandbox.controller.model.AuthInfo;
+import kz.greetgo.sandbox.controller.model.UserInfo;
 import kz.greetgo.sandbox.controller.register.AuthRegister;
 import kz.greetgo.sandbox.controller.register.model.SessionInfo;
 import kz.greetgo.sandbox.controller.register.model.UserParamName;
 import kz.greetgo.sandbox.controller.security.SecurityError;
 import kz.greetgo.sandbox.db.stand.beans.StandDb;
-import kz.greetgo.sandbox.db.stand.model.ClientInfoDot;
 import kz.greetgo.sandbox.db.stand.model.PersonDot;
 import kz.greetgo.util.ServerUtil;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 @Bean
 public class AuthRegisterStand implements AuthRegister {
@@ -125,97 +121,5 @@ public class AuthRegisterStand implements AuthRegister {
   @Override
   public UserInfo getUserInfo(String personId) {
     return db.get().personStorage.get(personId).toUserInfo();
-  }
-
-  @Override
-  public ClientInfo getClientInfo(String clientId) {
-    List<ClientInfoDot> clientsStorage = db.get().clientsStorage;
-    for (ClientInfoDot clientInfoDot : clientsStorage)
-      if (clientInfoDot.id.equals(clientId)) return clientInfoDot.toClientInfo();
-    return null;
-  }
-
-  @Override
-  public List<ClientInfoView> getClientInfoViewList() {
-    List<ClientInfoDot> clientsStorage = db.get().clientsStorage;
-    List<ClientInfoView> clientInfoViews = new ArrayList<>();
-    for (ClientInfoDot clientInfoDot : clientsStorage) clientInfoViews.add(clientInfoDot.toClientInfoView());
-    return clientInfoViews;
-  }
-
-  @Override
-  public List<ClientInfoView> getClientInfoViewList(int from, int to) {
-    List<ClientInfoDot> clientsStorage = db.get().clientsStorage;
-    List<ClientInfoView> clientInfoViews = new ArrayList<>();
-    for (int i = from; i < to; i++) {
-      if (i > clientsStorage.size()) break;
-      clientInfoViews.add(clientsStorage.get(i).toClientInfoView());
-    }
-    return clientInfoViews;
-  }
-
-  @Override
-  public int getTotalClientsNumber() {
-    return db.get().clientsStorage.size();
-  }
-
-  @Override
-  public void editClientInfo(ClientInfoEdited clientInfoEdited) {
-    List<ClientInfoDot> clientsStorage = db.get().clientsStorage;
-    for (ClientInfoDot clientInfoDot : clientsStorage) {
-      if (clientInfoDot.id != clientInfoEdited.id) continue;
-      clientInfoDot.name = clientInfoEdited.name;
-      clientInfoDot.surname = clientInfoEdited.surname;
-      clientInfoDot.sex = clientInfoEdited.sex;
-      clientInfoDot.name = clientInfoEdited.name;
-      clientInfoDot.age = clientInfoEdited.age;
-      for (ClientPhone clientPhone : clientInfoDot.clientPhones)
-        if (!clientInfoEdited.clientPhones.contains(clientPhone))clientInfoDot.clientPhones.remove(clientPhone);
-      for (ClientPhone clientPhone : clientInfoEdited.clientPhones)
-        if (!clientInfoDot.clientPhones.contains(clientPhone))clientInfoDot.clientPhones.add(clientPhone);
-      clientInfoDot.homeAddress = clientInfoEdited.homeAddress;
-      clientInfoDot.registrationAddress = clientInfoEdited.registrationAddress;
-      break;
-    }
-  }
-
-  @Override
-  public void removeClientInfo(String clientId) {
-    List<ClientInfoDot> clientsStorage = db.get().clientsStorage;
-    for (ClientInfoDot clientInfoDot : clientsStorage)
-      if (clientInfoDot.id.equals(clientId)) {
-        clientsStorage.remove(clientInfoDot);
-        return;
-      }
-  }
-
-  @Override
-  public List<ClientInfoView> getSortedClientInfoViewList (int from, int to, SortBy sortBy) {
-    ArrayList<ClientInfoDot> clientsStorage = (ArrayList) db.get().clientsStorage;
-    List<ClientInfoDot> sortedClientInfoList = (ArrayList<ClientInfoDot>) clientsStorage.clone();
-    Comparator<ClientInfoDot> clientInfoComparator = null;
-    switch (sortBy) {
-      case NAME:
-        clientInfoComparator = Comparator.comparing(o -> o.name);
-        break;
-      case SURNAME:
-        clientInfoComparator = Comparator.comparing(o -> o.surname);
-        break;
-      case AGE:
-        clientInfoComparator = Comparator.comparing(o -> o.age);
-        break;
-      case BALANCE:
-        clientInfoComparator = Comparator.comparing(o -> o.balance);
-        break;
-      case MIN_BALANCE:
-        clientInfoComparator = Comparator.comparing(o -> o.minBalance);
-        break;
-      case MAX_BALANCE:
-        clientInfoComparator = Comparator.comparing(o -> o.maxBalance);
-    }
-    Collections.sort(sortedClientInfoList, clientInfoComparator);
-    List<ClientInfoView> clientInfoViews = new ArrayList<>();
-    for (ClientInfoDot clientInfoDot : sortedClientInfoList) clientInfoViews.add(clientInfoDot.toClientInfoView());
-    return clientInfoViews;
   }
 }

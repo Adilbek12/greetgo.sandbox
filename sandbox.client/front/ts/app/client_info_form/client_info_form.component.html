@@ -23,35 +23,34 @@
           <tr>
             <td colspan="1">
               <label><b>Фамилия</b><span class="red_star">*</span></label>
-              <input type="text" placeholder="Фамилия" required>
+              <input id="surname" name="surname" type="text" placeholder="Фамилия" required>
             </td>
             <td colspan="1">
               <label><b>Имя</b><span class="red_star">*</span></label>
-              <input type="text" placeholder="Имя" required>
+              <input id="name" type="text" placeholder="Имя" required>
             </td>
           </tr>
           <tr>
             <td>
               <label><b>Отчество</b></label>
-              <input type="text" placeholder="Отчество" required>
+              <input id="patronymic" type="text" placeholder="Имя" required>
             </td>
             <td>
               <label><b>Пол</b><span class="red_star">*</span></label>
-              <input type="text" placeholder="Пол" required>
+              <label>Male:<input id="sex_male" type="radio" name="gender" value="male"/></label>
+              <label>Female: <input id="sex_female" type="radio" name="gender" value="female"/></label>
             </td>
           </tr>
           <tr>
             <td>
-              <label><b>Дата рождения</b><span class="red_star">*</span></label>
-              <input type="date" placeholder="Дата рождения" required>
+              <label><b>Возраст</b><span class="red_star">*</span></label>
+              <input id="age" type="number" placeholder="Возраст" required>
             </td>
             <td>
               <label><b>Характер</b><span class="red_star">*</span></label>
               <p style="padding: 10px">
-                <select>
-                  <option disabled>Выбрать</option>
-                  <option value = "Скромный">Скромный</option>
-                  <option value = "Упрямый">Упрямый</option>
+                <select id="character">
+                  <option *ngFor="let character of characters" value="{{character}}">{{character}}</option>
                 </select>
               </p>
             </td>
@@ -59,15 +58,15 @@
           <tr>
             <td>
               <label><b>Адрес регистрации</b><span class="red_star">*</span></label>
-              <input type="text" placeholder="Улица" required>
-              <input type="text" placeholder="Дом" required>
-              <input type="text" placeholder="Квартира" required>
+              <input id="ra_street" type="text" placeholder="Улица" required>
+              <input id="ra_house" type="text" placeholder="Дом" required>
+              <input id="ra_apartment" type="text" placeholder="Квартира" required>
             </td>
             <td>
               <label><b>Адрес проживания</b></label>
-              <input type="text" placeholder="Улица" required>
-              <input type="text" placeholder="Дом" required>
-              <input type="text" placeholder="Квартира" required>
+              <input id="la_street" type="text" placeholder="Улица" required>
+              <input id="la_home" type="text" placeholder="Дом" required>
+              <input id="la_apartment" type="text" placeholder="Квартира" required>
             </td>
           </tr>
           <tr>
@@ -77,13 +76,13 @@
           </tr>
           <tr>
             <td>
-              <input type="tel" placeholder="Домашний" required>
-              <input type="tel" placeholder="Рабочий" required>
-              <input type="tel" placeholder="Мобильный1" required>
+              <input id="home_phone" type="tel" placeholder="Домашний" required>
+              <input id="work_phone" type="tel" placeholder="Рабочий" required>
+              <input id="mobile_phone1" type="tel" placeholder="Мобильный1" required>
             </td>
             <td>
-              <input type="tel" placeholder="Мобильный2" required>
-              <input type="tel" placeholder="Мобильный3" required>
+              <input id="mobile_phone2" type="tel" placeholder="Мобильный2" required>
+              <input id="mobile_phone3" type="tel" placeholder="Мобильный3" required>
             </td>
           </tr>
           </tbody>
@@ -93,7 +92,7 @@
                 <button type="button" class="cancelbtn" (click)="close()">Заткрыть</button>
               </td>
               <td>
-                <button type="submit" class="signupbtn">Добавить</button>
+                <button type="submit" class="signupbtn" (click)="add()">Добавить</button>
               </td>
             </tr>
           </tfoot>

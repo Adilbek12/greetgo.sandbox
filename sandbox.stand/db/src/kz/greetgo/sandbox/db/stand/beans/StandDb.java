@@ -3,7 +3,7 @@ package kz.greetgo.sandbox.db.stand.beans;
 import kz.greetgo.depinject.core.Bean;
 import kz.greetgo.depinject.core.HasAfterInject;
 import kz.greetgo.sandbox.controller.model.*;
-import kz.greetgo.sandbox.db.stand.model.ClientInfoDot;
+import kz.greetgo.sandbox.db.stand.model.ClientDot;
 import kz.greetgo.sandbox.db.stand.model.PersonDot;
 import kz.greetgo.util.RND;
 
@@ -14,11 +14,22 @@ import java.util.*;
 @Bean
 public class StandDb implements HasAfterInject {
   public final Map<String, PersonDot> personStorage = new HashMap<>();
-  public final List<ClientInfoDot> clientsStorage = new ArrayList<>();
+  public final List<ClientDot> clientsStorage = new ArrayList<>();
+  public final List<Charm> charms = new ArrayList<>();
+  public final List<ClientPhone> phones = new ArrayList<>();
+  public final List<ClientAddress> addresses = new ArrayList<>();
+  public final List<ClientAccount> accounts = new ArrayList<>();
+
+  Random random = new Random();
 
   @Override
   public void afterInject() throws Exception {
+    appendCharms();
+    appendAddresses();
+    appendClientAccounts();
+
     appendClientInfoDotList();
+
     try (BufferedReader br = new BufferedReader(
       new InputStreamReader(getClass().getResourceAsStream("StandDbInitData.txt"), "UTF-8"))) {
 
@@ -49,22 +60,70 @@ public class StandDb implements HasAfterInject {
   }
 
   @SuppressWarnings("unused")
-  private void appendClientInfoDotList() {
-    Random random = new Random();
+  private void appendCharms() {
     for (int i = 0; i < 100; i++) {
-      ClientInfoDot clientInfoDot = new ClientInfoDot();
-      clientInfoDot.id = i+"";
-      clientInfoDot.name = RND.str(10);
-      clientInfoDot.surname = RND.str(10);
-      clientInfoDot.sex = Sex.MALE;
-      clientInfoDot.age = i;
-      clientInfoDot.balance = random.nextFloat();
-      clientInfoDot.maxBalance = random.nextFloat();
-      clientInfoDot.minBalance = random.nextFloat();
-      clientInfoDot.homeAddress = new ClientAddress(AddressType.REG, RND.str(4), RND.str(4), RND.str(4));
-      clientInfoDot.registrationAddress = new ClientAddress(AddressType.FACT, RND.str(4), RND.str(4), RND.str(4));
-      clientInfoDot.clientPhones = (ArrayList<ClientPhone>) Arrays.asList(new ClientPhone(PhoneType.MOBILE, RND.intStr(8)), new ClientPhone(PhoneType.HOME, RND.intStr(8)));
-      clientsStorage.add(clientInfoDot);
+      Charm charm = new Charm();
+      charm.description = RND.intStr(10);
+      charm.energy = random.nextFloat();
+      charm.description = RND.intStr(20);
+      charms.add(charm);
+    }
+  }
+
+  @SuppressWarnings("unused")
+  private void appendAddresses() {
+    for (int i = 0; i < 100; i++) {
+      ClientAddress clientAddress = new ClientAddress();
+      clientAddress.type = 1 == random.nextInt(1) ? AddressType.FACT : AddressType.REG;
+      clientAddress.street = RND.intStr(5);
+      clientAddress.house = RND.intStr(5);
+      clientAddress.flat = RND.intStr(5);
+      addresses.add(clientAddress);
+    }
+  }
+
+  @SuppressWarnings("unused")
+  private void appendPhones() {
+    for(int i = 0; i < 100; i++) {
+      ClientPhone clientPhone = new ClientPhone();
+      clientPhone.type = 1 == random.nextInt(1) ? PhoneType.HOME : PhoneType.MOBILE;
+      clientPhone.number = RND.intStr(10);
+      phones.add(clientPhone);
+    }
+  }
+
+  @SuppressWarnings("unused")
+  private void appendClientAccounts() {
+    for (int i = 0; i < 100; i++) {
+      ClientAccount clientAccount = new ClientAccount();
+      clientAccount.money = random.nextFloat()*random.nextInt(10000);
+      clientAccount.number = RND.intStr(10);
+      clientAccount.registered_at = null;
+      accounts.add(clientAccount);
+    }
+  }
+
+  @SuppressWarnings("unused")
+  private void appendClientInfoDotList() {
+    for (int i = 0; i < 100; i++) {
+      ClientDot clientDot = new ClientDot();
+      clientDot.id = i;
+      clientDot.name = RND.str(10);
+      clientDot.surname = RND.str(10);
+      clientDot.gender = Gender.MALE;
+      clientDot.patronymic = RND.str(10);
+      clientDot.birth_day = RND.dateYears(1900, 2018);
+      clientDot.charm = charms.get(random.nextInt(charms.size()));
+      clientDot.client_addr = new ClientAddress[2];
+      clientDot.client_addr[0] = addresses.get(random.nextInt(addresses.size()));
+      clientDot.client_addr[1] = addresses.get(random.nextInt(addresses.size()));
+      clientDot.client_phones = new ClientPhone[5];
+      clientDot.client_phones[0] = phones.get(random.nextInt(phones.size()));
+      clientDot.client_phones[1] = phones.get(random.nextInt(phones.size()));
+      clientDot.client_phones[2] = phones.get(random.nextInt(phones.size()));
+      clientDot.client_phones[3] = phones.get(random.nextInt(phones.size()));
+      clientDot.client_phones[4] = phones.get(random.nextInt(phones.size()));
+      clientsStorage.add(clientDot);
     }
   }
 

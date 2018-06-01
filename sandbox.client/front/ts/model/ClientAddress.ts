@@ -4,5 +4,5 @@ export class ClientAddress {
   public type: AddressType;
   public street: string;
   public house: string;
-  public apartment: string;
+  public flat: string;
 }

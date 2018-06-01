@@ -39,7 +39,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let client of clientInfoList">
+        <tr *ngFor="let client of clientInfoViewList">
           <td scope="col">{{client.name}}</td>
           <td scope="col">{{client.surname}}</td>
           <td scope="col">{{client.age}}</td>
@@ -57,12 +57,12 @@
                   <span (click)="paginationPageButtonClicked(currentPage-1)" [hidden]="currentPage <= 1"> &lt; PREV</span>
                 </li>
                 <li>
-                  <span (click)="currentPage = currentPage - 2" [hidden]="currentPage < pagesSize - 2">{{currentPage - 2}}</span>
-                  <span (click)="currentPage = currentPage - 1" [hidden]="currentPage === 1">{{currentPage - 1}}</span>
+                  <span (click)="paginationPageButtonClicked(currentPage - 2)" [hidden]="currentPage < pagesSize - 2">{{currentPage - 2}}</span>
+                  <span (click)="paginationPageButtonClicked(currentPage - 1)" [hidden]="currentPage === 1">{{currentPage - 1}}</span>
                   <span class="active">{{currentPage}}</span>
-                  <span (click)="currentPage = currentPage + 1" [hidden]="currentPage >= pagesSize - 1">{{currentPage + 1}}</span>
-                  <span (click)="currentPage = currentPage + 2" [hidden]="currentPage >= pagesSize - 2">{{currentPage + 2}}</span>
-                  <span (click)="currentPage = currentPage + 3" [hidden]="currentPage !== 0 ">{{currentPage + 4}}</span>
+                  <span (click)="paginationPageButtonClicked(currentPage + 1)" [hidden]="currentPage >= pagesSize - 1">{{currentPage + 1}}</span>
+                  <span (click)="paginationPageButtonClicked(currentPage + 2)" [hidden]="currentPage >= pagesSize - 2">{{currentPage + 2}}</span>
+                  <span (click)="paginationPageButtonClicked(currentPage + 3)" [hidden]="currentPage !== 0 ">{{currentPage + 4}}</span>
                 </li>
                 <li>
                   <span (click)="paginationPageButtonClicked(currentPage+1)" [hidden]="currentPage === pagesSize-1">NEXT &gt;</span>

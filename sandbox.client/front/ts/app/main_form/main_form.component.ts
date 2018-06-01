@@ -5,6 +5,7 @@ import {PhoneType} from "../../model/PhoneType";
 import {ClientInfo} from "../../model/ClientInfo";
 import {ClientInfoView} from "../../model/ClientInfoView";
 
+
 @Component({
   selector: 'main-form-component',
   template: require('./main_form.component.html'),
@@ -52,21 +53,21 @@ export class MainFormComponent {
   }
 
   loadClientInfoList() {
-    this.loadPage(this.currentPage);
+    this.loadPage();
     this.loadPagesSize();
   }
 
   paginationPageButtonClicked(page: number) {
     if (this.currentPage == page) return;
     this.currentPage = page;
-    this.loadPage(page)
+    this.loadPage()
   }
 
-  loadPage (page: number) {
+  loadPage () {
     this.clientInfoViewList = [];
-    this.httpService.post("/auth/clientInfoListViewPart", {"from": page*10-10,"to": page*10 }).toPromise().then(result => {
+    this.httpService.post("/auth/clientInfoViewListPart", {"from": this.currentPage*10-10,"to": this.currentPage*10 }).toPromise().then(result => {
       for (let res of result.json()) {
-        this.clientInfoViewList.push(ClientInfo.copy(res))
+        this.clientInfoViewList.push(ClientInfoView.copy(res))
       }
     })
   }
@@ -76,7 +77,7 @@ export class MainFormComponent {
       this.pagesSize = Math.ceil((result.json() as number)/10);
       if (this.pagesSize < this.currentPage) {
         this.currentPage -= 1;
-        this.loadPage(this.currentPage);
+        this.loadPage();
       }
     });
   }
@@ -84,9 +85,9 @@ export class MainFormComponent {
   deleteClientInfoByIndex (clientInfo: ClientInfo) {
     let ID = clientInfo.id;
 
-    this.httpService.post("/auth/deleteClientInfo", {"ID": ID}).toPromise().then(result => {
+    this.httpService.post("/auth/deleteClientInfo", {"clientId": ID}).toPromise().then(result => {
       this.loadPagesSize();
-      this.loadPage(this.currentPage);
+      this.loadPage();
     });
   }
 
