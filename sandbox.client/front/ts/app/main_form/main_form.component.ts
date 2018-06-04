@@ -1,9 +1,11 @@
-import {Component, EventEmitter, Output} from "@angular/core";
+import {Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
 import {UserInfo} from "../../model/UserInfo";
 import {HttpService} from "../HttpService";
 import {PhoneType} from "../../model/PhoneType";
-import {ClientInfo} from "../../model/ClientInfo";
-import {ClientInfoView} from "../../model/ClientInfoView";
+import {ClientRecords} from "../../model/ClientRecords";
+import {SortBy} from "../../model/SortBy";
+import {PageParam} from "../../model/PageParam";
+import {Page} from "../../model/Page";
 
 
 @Component({
@@ -15,16 +17,21 @@ import {ClientInfoView} from "../../model/ClientInfoView";
 export class MainFormComponent {
   @Output() exit = new EventEmitter<void>();
 
-  currentPage: number = 1;
-  pagesSize: number = 0;
-
   userInfo: UserInfo | null = null;
-  clientInfoViewList: ClientInfoView[] | null = null;
 
   loadUserInfoButtonEnabled: boolean = false;
   loadClientInfoListButtonEnable: boolean = false;
 
-  constructor(private httpService: HttpService) {}
+  page: Page = new Page();
+  pageParam: PageParam = new PageParam();
+  currentPage: number = 1;
+  sortIndex: number = -1;
+  numberOfItemInPage: number = 10;
+
+  @ViewChild("modal") modal: ElementRef;
+
+  constructor(private httpService: HttpService) {
+  }
 
   switchBetweenUserAndClient (client: boolean) {
     this.loadUserInfoButtonEnabled = !client;
@@ -32,12 +39,11 @@ export class MainFormComponent {
 
     if (client) {
       this.userInfo = null;
-      this.loadClientInfoList();
-    } else {
-      this.clientInfoViewList = null;
+      this.loadClientRecordsList();
+    }
+    else {
       this.loadUserInfo();
     }
-
   }
 
   loadUserInfo() {
@@ -52,46 +58,85 @@ export class MainFormComponent {
     });
   }
 
-  loadClientInfoList() {
+  loadClientRecordsList() {
+    this.pageParam.from = 0;
+    this.pageParam.to = 10;
+    this.currentPage = 1;
     this.loadPage();
-    this.loadPagesSize();
   }
 
   paginationPageButtonClicked(page: number) {
     if (this.currentPage == page) return;
     this.currentPage = page;
+    this.pageParam.from = this.currentPage*this.numberOfItemInPage - this.numberOfItemInPage;
+    this.pageParam.to = this.currentPage*this.numberOfItemInPage;
     this.loadPage()
   }
 
-  loadPage () {
-    this.clientInfoViewList = [];
-    this.httpService.post("/auth/clientInfoViewListPart", {"from": this.currentPage*10-10,"to": this.currentPage*10 }).toPromise().then(result => {
-      for (let res of result.json()) {
-        this.clientInfoViewList.push(ClientInfoView.copy(res))
-      }
+  loadPage() {
+
+    this.httpService.post("/client/records", {
+      "page":JSON.stringify(this.pageParam)
+    }).toPromise().then(result => {
+      this.page = Page.copy(result.json());
     })
   }
 
-  loadPagesSize () {
-    this.httpService.get("/auth/totalClientsNumber").toPromise().then(result => {
-      this.pagesSize = Math.ceil((result.json() as number)/10);
-      if (this.pagesSize < this.currentPage) {
-        this.currentPage -= 1;
-        this.loadPage();
-      }
-    });
+  filterPage() {
+    let search_text = (document.getElementById("search_input") as HTMLInputElement).value;
+    if (search_text == "") this.pageParam.filter = null;
+    else this.pageParam.filter = search_text;
+    this.loadPage()
   }
 
-  deleteClientInfoByIndex (clientInfo: ClientInfo) {
-    let ID = clientInfo.id;
+  sortPage(index: number) {
 
-    this.httpService.post("/auth/deleteClientInfo", {"clientId": ID}).toPromise().then(result => {
-      this.loadPagesSize();
+    if (this.sortIndex == index) {
+      this.sortIndex = -1;
+      this.pageParam.sortBy = SortBy.NONE;
+      this.loadPage();
+      return;
+    }
+
+    let sortBy: SortBy;
+    switch (index) {
+      case 0: sortBy = SortBy.NAME;
+        break;
+      case 1: sortBy = SortBy.SURNAME;
+        break;
+      case 2: sortBy = SortBy.AGE;
+        break;
+      case 3: sortBy = SortBy.MIDDLE_BALANCE;
+        break;
+      case 4: sortBy = SortBy.MAX_BALANCE;
+        break;
+      case 5: sortBy = SortBy.MIN_BALANCE;
+        break;
+    }
+
+    this.sortIndex = index;
+    this.pageParam.sortBy = sortBy;
+    this.loadPage();
+  }
+
+  pagesCount(): number {
+    return Math.ceil(this.page.pagesCount / this.numberOfItemInPage);
+  }
+
+  deleteClientInfoById (clientRecords: ClientRecords) {
+    let ID = clientRecords.id;
+    this.httpService.post("/client/delete", {
+      "clientId": ID
+    }).toPromise().then(() => {
       this.loadPage();
     });
   }
 
+  editClient(client: ClientRecords) {
+    document.getElementById("myModal").style.display="block";
+  }
+
   openAddNewClientModal() {
-    document.getElementById("myModal").style.display="block"
+    document.getElementById("myModal").style.display="block";
   }
 }

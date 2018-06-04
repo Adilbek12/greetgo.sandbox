@@ -1,5 +1,5 @@
 export class ClientAccount {
   public money: number;
   public number: string;
-  public registered_at: Date;
+  public registered_at: string;
 }

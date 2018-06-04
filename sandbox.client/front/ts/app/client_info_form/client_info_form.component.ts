@@ -1,12 +1,12 @@
 import {Component} from "@angular/core";
 import {HttpService} from "../HttpService";
-import {CharacterType} from "../../model/Charm";
-import {Sex} from "../../model/Sex";
 import {ClientAddress} from "../../model/ClientAddress";
 import {AddressType} from "../../model/AddressType";
-import {ClientInfoNew} from "../../model/ClientInfoNew";
 import {ClientPhone} from "../../model/ClientPhone";
 import {PhoneType} from "../../model/PhoneType";
+import {Gender} from "../../model/Gender";
+import {ClientToSave} from "../../model/ClientToSave";
+import {Charm} from "../../model/Charm";
 
 @Component({
   selector: 'client-info-form-component',
@@ -16,82 +16,95 @@ import {PhoneType} from "../../model/PhoneType";
 
 export class ClientInfoFormComponent {
 
-  characters: CharacterType[] = [CharacterType.ANXIOUS, CharacterType.CYCLOID,
-    CharacterType.DEMONSTRATIVE, CharacterType.DYSTHYMIC, CharacterType.EXCITABLE,
-    CharacterType.PEDANTIC, CharacterType.STUCK, CharacterType.HYPERTENSIVE];
+  charms: Charm[] = Charm.getRandomCharms();
+
+  nameInput = this.getElementById("name");
+  surnameInput = this.getElementById("surname");
+  patronymicInput = this.getElementById("patronymic");
+  birthDayInput = this.getElementById("birth_day");
+  charmInput = (document.getElementById("charm") as HTMLSelectElement);
+
+  raStreetInput = this.getElementById("ra_street");
+  raHouseInput = this.getElementById("ra_house");
+  raFlatInput = this.getElementById("ra_flat");
+
+  haStreetInput = this.getElementById("ha_street");
+  haHouseInput = this.getElementById("ha_house");
+  haFlatInput = this.getElementById("ha_flat");
+
+  homePhoneInput = this.getElementById("home_phone");
+  workPhoneInput = this.getElementById("work_phone");
+  mobilePhone1Input = this.getElementById("mobile_phone1");
+  mobilePhone2Input = this.getElementById("mobile_phone2");
+  mobilePhone3Input = this.getElementById("mobile_phone3");
 
   constructor(private httpService: HttpService) {}
-
 
   close() {
     document.getElementById("myModal").style.display = "none"
   }
 
+  getElementById(id: string): HTMLInputElement {
+    return (document.getElementById("surname") as HTMLInputElement);
+  }
+
   add() {
-    let surname: string = (document.getElementById("surname") as HTMLInputElement).value;
 
-    let name: string = (document.getElementById("name") as HTMLInputElement).value;
-
-    let patronymic: string = (document.getElementById("patronymic") as HTMLInputElement).value;
-
-    let sex: Sex;
-    if ((document.getElementById("sex_male") as HTMLInputElement).checked) {
-      sex = Sex.MALE;
-    } else if ((document.getElementById("sex_female") as HTMLInputElement).checked) {
-      sex = Sex.FEMALE;
+    let gender: Gender;
+    if ((document.getElementById("male") as HTMLInputElement).checked) {
+      gender = Gender.MALE;
+    } else if ((document.getElementById("female") as HTMLInputElement).checked) {
+      gender = Gender.FEMALE;
     }
 
-    let age = +(document.getElementById("age") as HTMLInputElement).value;
-
-    let character: string = (document.getElementById("character") as HTMLSelectElement).value;
 
     let registrationAddress = new ClientAddress();
-    let ra_street = (document.getElementById("ra_street") as HTMLInputElement).value;
-    let ra_house = (document.getElementById("ra_house") as HTMLInputElement).value;
-    let ra_apartment = (document.getElementById("ra_apartment") as HTMLInputElement).value;
-    registrationAddress.apartment = ra_street;
-    registrationAddress.house = ra_house;
-    registrationAddress.apartment = ra_apartment;
+    registrationAddress.street = this.raStreetInput.value;
+    registrationAddress.house = this.raHouseInput.value;
+    registrationAddress.flat = this.raFlatInput.value;
     registrationAddress.type = AddressType.REG;
 
     let homeAddress = new ClientAddress();
-    let la_street = (document.getElementById("la_street") as HTMLInputElement).value;
-    let la_house = (document.getElementById("la_house") as HTMLInputElement).value;
-    let la_apartment = (document.getElementById("la_apartment") as HTMLInputElement).value;
-    homeAddress.apartment = la_street;
-    homeAddress.house = la_house;
-    homeAddress.apartment = la_apartment;
+    homeAddress.street = this.haStreetInput.value;
+    homeAddress.house = this.haHouseInput.value;
+    homeAddress.flat = this.haFlatInput.value;
     homeAddress.type = AddressType.FACT;
 
-    let home_phone = new ClientPhone();
-    home_phone.number = (document.getElementById("home_phone") as HTMLInputElement).value;
-    home_phone.phoneType = PhoneType.HOME;
+    let homePhone = new ClientPhone();
+    homePhone.number = this.homePhoneInput.value;
+    homePhone.type = PhoneType.HOME;
 
-    let work_phone = new ClientPhone();
-    work_phone.number = (document.getElementById("work_phone") as HTMLInputElement).value;
-    work_phone.phoneType = PhoneType.WORK;
+    let workPhone = new ClientPhone();
+    workPhone.number = this.workPhoneInput.value;
+    workPhone.type = PhoneType.WORK;
 
-    let mobile_phone1 = new ClientPhone();
-    mobile_phone1.number = (document.getElementById("mobile_phone1") as HTMLInputElement).value;
-    mobile_phone1.phoneType = PhoneType.MOBILE;
+    let mobilePhone1 = new ClientPhone();
+    mobilePhone1.number = this.mobilePhone1Input.value;
+    mobilePhone1.type = PhoneType.MOBILE;
 
-    let mobile_phone2 = new ClientPhone();
-    mobile_phone2.number = (document.getElementById("mobile_phone2") as HTMLInputElement).value;
-    mobile_phone2.phoneType = PhoneType.MOBILE;
+    let mobilePhone2 = new ClientPhone();
+    mobilePhone2.number = this.mobilePhone2Input.value;
+    mobilePhone2.type = PhoneType.MOBILE;
 
-    let mobile_phone3 = new ClientPhone();
-    mobile_phone3.number = (document.getElementById("mobile_phone3") as HTMLInputElement).value;
-    mobile_phone3.phoneType = PhoneType.MOBILE;
+    let mobilePhone3 = new ClientPhone();
+    mobilePhone3.number = this.mobilePhone3Input.value;
+    mobilePhone3.type = PhoneType.MOBILE;
 
-    let newClientInfo = new ClientInfoNew();
-    newClientInfo.name = name;
-    newClientInfo.surname = surname;
-    newClientInfo.sex = sex;
-    newClientInfo.age = age;
-    newClientInfo.character = character as CharacterType;
-    newClientInfo.homeAddress = homeAddress;
-    newClientInfo.registrationAddress = registrationAddress;
-    newClientInfo.clientPhones = [home_phone, work_phone, mobile_phone1, mobile_phone2, mobile_phone3];
+    let clientToSave = new ClientToSave();
+    clientToSave.id = -1;
+    clientToSave.name = this.nameInput.value;
+    clientToSave.surname = this.surnameInput.value;
+    clientToSave.patronymic = this.patronymicInput.value;
+    clientToSave.gender = gender;
+    clientToSave.birth_day = this.birthDayInput.value;
+    clientToSave.charm = this.charms[this.charmInput.selectedIndex];
+    clientToSave.clientAddresses = [homeAddress, registrationAddress];
+    clientToSave.clientPhones = [homePhone, workPhone, mobilePhone1, mobilePhone2, mobilePhone3];
 
+    this.httpService.post("/client/create", {
+      "client": JSON.stringify(clientToSave)
+    }).toPromise().then(result => {
+      this.close()
+    })
   }
 }

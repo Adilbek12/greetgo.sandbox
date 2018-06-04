@@ -9,7 +9,7 @@ export class ClientToSave {
   public name: string;
   public patronymic: string;
   public gender: Gender;
-  public birth_day: Date;
+  public birth_day: string;
   public charm: Charm;
   public clientAddresses: ClientAddress[];
   public clientPhones: ClientPhone[];

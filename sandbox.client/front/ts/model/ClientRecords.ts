@@ -1,4 +1,5 @@
 export class ClientRecords {
+  public id: number;
   public name: string;
   public surname: string;
   public patronymic: string;
@@ -8,6 +9,7 @@ export class ClientRecords {
   public min_balance: number | null;
 
   public assign(o: any): ClientRecords {
+    this.id = o.id;
     this.name = o.name;
     this.surname = o.surname;
     this.patronymic = o.patronymic;
