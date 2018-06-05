@@ -1,7 +1,7 @@
 
 /* The Modal (background) */
 .modal {
-  display: none; /* Hidden by default */
+  display: block; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
   padding-top: 100px; /* Location of the box */
@@ -37,6 +37,7 @@ td {
   display: inline-block;
   border: none;
   background: #f1f1f1;
+  border-radius: 7px;
 }
 
 select {
@@ -62,17 +63,19 @@ hr {
 button {
   background-color: rgb(59,97,151);
   color: white;
+  outline: none;
   padding: 14px 20px;
   margin: 8px 0;
   border: none;
   cursor: pointer;
   width: 100%;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 button:hover {
   opacity:1;
 }
+
 .cancelbtn {
   padding: 14px 20px;
   background-color: red;

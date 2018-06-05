@@ -1,0 +1,64 @@
+<div>
+  <table class="customers">
+    <colgroup>
+      <col><col><col><col><col><col><col><col>
+    </colgroup>
+    <thead>
+    <tr class="tr-head">
+      <th class="noselect not_sort_th" (click)="sortPage(0)">Name<span *ngIf="sortIndex==0">▲</span><span *ngIf="sortIndex==0+100">▼</span></th>
+      <th class="noselect not_sort_th" (click)="sortPage(1)">Surname<span *ngIf="sortIndex==1">▲</span><span *ngIf="sortIndex==1+100">▼</span></th>
+      <th class="noselect not_sort_th" (click)="sortPage(2)">Age<span *ngIf="sortIndex==2">▲</span><span *ngIf="sortIndex==2+100">▼</span></th>
+      <th class="noselect not_sort_th" (click)="sortPage(3)">Balance<span *ngIf="sortIndex==3">▲</span><span *ngIf="sortIndex==3+100">▼</span></th>
+      <th class="noselect not_sort_th" (click)="sortPage(4)">Max balance<span *ngIf="sortIndex==4">▲</span><span *ngIf="sortIndex==4+100">▼</span></th>
+      <th class="noselect not_sort_th" (click)="sortPage(5)">Min balance<span *ngIf="sortIndex==5">▲</span><span *ngIf="sortIndex==5+100">▼</span></th>
+      <th class="not_sort_th noselect" style="cursor: default;">Delete</th>
+      <th class="not_sort_th noselect" style="cursor: default;">Edit</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let client of page.clientRecordsList">
+      <td scope="col">{{client.name}}</td>
+      <td scope="col">{{client.surname}}</td>
+      <td scope="col">{{client.age}}</td>
+      <td scope="col">{{client.middle_balance}}</td>
+      <td scope="col">{{client.max_balance}}</td>
+      <td scope="col">{{client.min_balance}}</td>
+      <td scope="col"><button class="delete-button" (click)="deleteClientInfoById(client)"><i class="fa fa-trash"></i></button></td>
+      <td scope="col"><button class="delete-button" (click)="editClientButtonClicked(client)">...</button></td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+      <td colspan="8" >
+        <div class="pagination" class="topnav" style="float:left;">
+          <button style="float: right;" (click)="filterPage()">Поиск</button>
+          <input #searchInput id="searchInput" style="outline: none" type="text" placeholder="Поиск..">
+        </div>
+        <div class="float_center" *ngIf="pagesCount()>1">
+          <div class="pagination">
+            <li>
+              <span class="noselect" style="cursor: pointer;" (click)="paginationPageButtonClicked(currentPage-1)" [hidden]="currentPage<=1"> &lt; PREV</span>
+            </li>
+            <li>
+              <span class="noselect" style="cursor: pointer;"  (click)="paginationPageButtonClicked(currentPage-2)" [hidden]="currentPage <= pagesCount() - 1">{{currentPage - 2}}</span>
+              <span class="noselect" style="cursor: pointer;" (click)="paginationPageButtonClicked(currentPage-1)" [hidden]="currentPage === 1">{{currentPage - 1}}</span>
+              <span class="active noselect">{{currentPage}}</span>
+              <span class="noselect" style="cursor: pointer;" (click)="paginationPageButtonClicked(currentPage+1)" [hidden]="currentPage >= pagesCount()">{{currentPage + 1}}</span>
+              <span class="noselect" style="cursor: pointer;" (click)="paginationPageButtonClicked(currentPage+2)" [hidden]="currentPage >= pagesCount() - 1">{{currentPage + 2}}</span>
+              <span class="noselect" style="cursor: pointer;" (click)="paginationPageButtonClicked(currentPage+3)" [hidden]="currentPage !== 0 ">{{currentPage + 4}}</span>
+            </li>
+            <li>
+              <span class="noselect" style="cursor: pointer;" (click)="paginationPageButtonClicked(currentPage+1)" [hidden]="currentPage === pagesCount()">NEXT &gt;</span>
+            </li>
+          </div>
+        </div>
+        <div style="float: right">
+          <select class="pagination" style="outline: none; height: 40px; width: 50px; background-color: white" id="4324" (change)="numberOfItemInPageSelected()">
+            <option *ngFor="let i of range(10, 31, 10)" value="{{i}}">{{i}}</option>
+          </select>
+        </div>
+      </td>
+    </tr>
+    </tfoot>
+  </table>
+</div>

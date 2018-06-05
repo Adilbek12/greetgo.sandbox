@@ -1,12 +1,8 @@
-import {Component} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {HttpService} from "../HttpService";
-import {ClientAddress} from "../../model/ClientAddress";
-import {AddressType} from "../../model/AddressType";
-import {ClientPhone} from "../../model/ClientPhone";
-import {PhoneType} from "../../model/PhoneType";
-import {Gender} from "../../model/Gender";
 import {ClientToSave} from "../../model/ClientToSave";
 import {Charm} from "../../model/Charm";
+import {Gender} from "../../model/Gender";
 
 @Component({
   selector: 'client-info-form-component',
@@ -14,97 +10,94 @@ import {Charm} from "../../model/Charm";
   styles: [require('./client_info_form.component.css')],
 })
 
-export class ClientInfoFormComponent {
+export class ClientInfoFormComponent implements OnInit{
 
-  charms: Charm[] = Charm.getRandomCharms();
+  @Input() clientId: number;
+  @Output() onClose = new EventEmitter<void>();
 
-  nameInput = this.getElementById("name");
-  surnameInput = this.getElementById("surname");
-  patronymicInput = this.getElementById("patronymic");
-  birthDayInput = this.getElementById("birth_day");
-  charmInput = (document.getElementById("charm") as HTMLSelectElement);
+  charms: Array<Charm> = new Array<Charm>();
+  wrongMessageEnable: boolean = false;
+  clientToSave: ClientToSave = new ClientToSave();
 
-  raStreetInput = this.getElementById("ra_street");
-  raHouseInput = this.getElementById("ra_house");
-  raFlatInput = this.getElementById("ra_flat");
-
-  haStreetInput = this.getElementById("ha_street");
-  haHouseInput = this.getElementById("ha_house");
-  haFlatInput = this.getElementById("ha_flat");
-
-  homePhoneInput = this.getElementById("home_phone");
-  workPhoneInput = this.getElementById("work_phone");
-  mobilePhone1Input = this.getElementById("mobile_phone1");
-  mobilePhone2Input = this.getElementById("mobile_phone2");
-  mobilePhone3Input = this.getElementById("mobile_phone3");
-
-  constructor(private httpService: HttpService) {}
-
-  close() {
-    document.getElementById("myModal").style.display = "none"
+  constructor(private httpService: HttpService) {
+    this.loadCharms();
   }
 
-  getElementById(id: string): HTMLInputElement {
-    return (document.getElementById("surname") as HTMLInputElement);
+  ngOnInit(): void {
+    console.log("NG ON INIT | CLIENT TO SAVE ID= " + this.clientId);
+    if (this.clientId != -1) {
+      this.httpService.post("/client/get", {"clientId": this.clientId}).toPromise().then(result => {
+        this.clientToSave = ClientToSave.copy(result.json());
+      })
+    }
+    else
+      this.clientToSave = new ClientToSave();
+  }
+
+  genderSelected(selectedIndex: number) {
+    switch (selectedIndex) {
+      case 1:
+        this.clientToSave.gender = Gender.FEMALE;
+        break;
+      case 0:
+        this.clientToSave.gender = Gender.MALE;
+        break;
+    }
+  }
+
+  loadCharms() {
+    this.httpService.get("/client/getCharms").toPromise().then(result => {
+      for (let res of result.json())
+        this.charms.push(Charm.copy(res));
+    })
+  }
+
+  checkClient(): boolean {
+    return this.checkData(this.clientToSave.addressReg) &&
+      this.checkClientPhones() &&
+      this.checkData(this.clientToSave.name) &&
+      this.checkData(this.clientToSave.surname) &&
+      this.checkData(this.clientToSave.birth_day) &&
+      this.checkData(this.clientToSave.gender) &&
+      this.checkClientPhones();
+  }
+
+  checkData(element: any): boolean {
+    return (element != null && element != "")
+  }
+
+  checkClientPhones(): boolean {
+    return this.checkData(this.clientToSave.mobilePhone.number) &&
+      this.checkData(this.clientToSave.workPhone.number) &&
+      this.checkData(this.clientToSave.homePhone.number);
+  }
+
+  charmSelected() {
+    console.log("CHARM SELECTED!");
   }
 
   add() {
-
-    let gender: Gender;
-    if ((document.getElementById("male") as HTMLInputElement).checked) {
-      gender = Gender.MALE;
-    } else if ((document.getElementById("female") as HTMLInputElement).checked) {
-      gender = Gender.FEMALE;
+    console.log("CHECK!");
+    if (this.checkClient()) {
+      console.log("SUCCESS!");
+      this.wrongMessageEnable = false;
+      this.saveClient();
     }
+    else {
+      console.log("FAILED!");
+      this.wrongMessageEnable = true;
+    }
+  }
 
-
-    let registrationAddress = new ClientAddress();
-    registrationAddress.street = this.raStreetInput.value;
-    registrationAddress.house = this.raHouseInput.value;
-    registrationAddress.flat = this.raFlatInput.value;
-    registrationAddress.type = AddressType.REG;
-
-    let homeAddress = new ClientAddress();
-    homeAddress.street = this.haStreetInput.value;
-    homeAddress.house = this.haHouseInput.value;
-    homeAddress.flat = this.haFlatInput.value;
-    homeAddress.type = AddressType.FACT;
-
-    let homePhone = new ClientPhone();
-    homePhone.number = this.homePhoneInput.value;
-    homePhone.type = PhoneType.HOME;
-
-    let workPhone = new ClientPhone();
-    workPhone.number = this.workPhoneInput.value;
-    workPhone.type = PhoneType.WORK;
-
-    let mobilePhone1 = new ClientPhone();
-    mobilePhone1.number = this.mobilePhone1Input.value;
-    mobilePhone1.type = PhoneType.MOBILE;
-
-    let mobilePhone2 = new ClientPhone();
-    mobilePhone2.number = this.mobilePhone2Input.value;
-    mobilePhone2.type = PhoneType.MOBILE;
-
-    let mobilePhone3 = new ClientPhone();
-    mobilePhone3.number = this.mobilePhone3Input.value;
-    mobilePhone3.type = PhoneType.MOBILE;
-
-    let clientToSave = new ClientToSave();
-    clientToSave.id = -1;
-    clientToSave.name = this.nameInput.value;
-    clientToSave.surname = this.surnameInput.value;
-    clientToSave.patronymic = this.patronymicInput.value;
-    clientToSave.gender = gender;
-    clientToSave.birth_day = this.birthDayInput.value;
-    clientToSave.charm = this.charms[this.charmInput.selectedIndex];
-    clientToSave.clientAddresses = [homeAddress, registrationAddress];
-    clientToSave.clientPhones = [homePhone, workPhone, mobilePhone1, mobilePhone2, mobilePhone3];
-
-    this.httpService.post("/client/create", {
-      "client": JSON.stringify(clientToSave)
+  saveClient() {
+    this.httpService.post("/client/save", {
+      "clientToSave": JSON.stringify(this.clientToSave)
     }).toPromise().then(result => {
       this.close()
     })
+  }
+
+  close() {
+    this.onClose.emit();
   }
 }

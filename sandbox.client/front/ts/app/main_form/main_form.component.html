@@ -1,81 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-</head>
-<body>
 <div>
+  <div class="topnav">
+    <button (click)="exit.emit()">Выход</button>
+    <button [ngClass]="{active:loadUserInfoButtonEnabled}" (click)="switchBetweenUserAndClient(false)" >Данные пользователя</button>
+    <button [ngClass]="{active:loadClientInfoListButtonEnable}" (click)="switchBetweenUserAndClient(true)" >Данные клентов</button>
+    <button *ngIf="loadClientInfoListButtonEnable" (click)="openAddNewClientModal()">Добавить новый клент</button>
+  </div>
 
-  <div>
-    <div class="topnav">
-      <button (click)="exit.emit()">Выход</button>
-      <button [ngClass]="{active:loadUserInfoButtonEnabled}" (click)="switchBetweenUserAndClient(false)" >Данные пользователя</button>
-      <button [ngClass]="{active:loadClientInfoListButtonEnable}" (click)="switchBetweenUserAndClient(true)" >Данные клентов</button>
-      <button *ngIf="loadClientInfoListButtonEnable" (click)="openAddNewClientModal()">Добавить новый клент</button>
-      <button style="float: right;" (click)="filterPage()">Поиск</button>
-      <input id="search_input" type="text" placeholder="Поиск..">
-    </div>
-    <div *ngIf="loadClientInfoListButtonEnable">
-      <table class="customers">
-        <colgroup>
-          <col>
-          <col>
-          <col>
-          <col>
-          <col>
-          <col>
-          <col>
-          <col>
-        </colgroup>
-        <thead>
-        <tr class="tr-head">
-          <th [ngClass]="{sort_tr:sortIndex==0,not_sort_th:sortIndex!=0}" (click)="sortPage(0)">Name</th>
-          <th [ngClass]="{sort_tr:sortIndex==1,not_sort_th:sortIndex!=1}" (click)="sortPage(1)">Surname</th>
-          <th [ngClass]="{sort_tr:sortIndex==2,not_sort_th:sortIndex!=2}" (click)="sortPage(2)">Age</th>
-          <th [ngClass]="{sort_tr:sortIndex==3,not_sort_th:sortIndex!=3}" (click)="sortPage(3)">Balance</th>
-          <th [ngClass]="{sort_tr:sortIndex==4,not_sort_th:sortIndex!=4}" (click)="sortPage(4)">Max balance</th>
-          <th [ngClass]="{sort_tr:sortIndex==5,not_sort_th:sortIndex!=5}" (click)="sortPage(5)">Min balance</th>
-          <th class="not_sort_th">Delete</th>
-          <th class="not_sort_th">Edit</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let client of page.clientRecordsList">
-          <td [ngClass]="{sort_td:sortIndex==0}" scope="col">{{client.name}}</td>
-          <td [ngClass]="{sort_td:sortIndex==1}" scope="col">{{client.surname}}</td>
-          <td [ngClass]="{sort_td:sortIndex==2}" scope="col">{{client.age}}</td>
-          <td [ngClass]="{sort_td:sortIndex==3}" scope="col">{{client.middle_balance}}</td>
-          <td [ngClass]="{sort_td:sortIndex==4}" scope="col">{{client.max_balance}}</td>
-          <td [ngClass]="{sort_td:sortIndex==5}" scope="col">{{client.min_balance}}</td>
-          <td scope="col"><button class="delete-button" (click)="deleteClientInfoById(client)"><i class="fa fa-trash"></i></button></td>
-          <td scope="col"><button class="delete-button" (click)="editClient(client)">...</button></td>
-        </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="10">
-              <div class="pagination">
-                <li>
-                  <span (click)="paginationPageButtonClicked(currentPage-1)" [hidden]="currentPage <= 1"> &lt; PREV</span>
-                </li>
-                <li>
-                  <span (click)="paginationPageButtonClicked(currentPage - 2)" [hidden]="currentPage < pagesCount()- 2">{{currentPage - 2}}</span>
-                  <span (click)="paginationPageButtonClicked(currentPage - 1)" [hidden]="currentPage === 1">{{currentPage - 1}}</span>
-                  <span class="active">{{currentPage}}</span>
-                  <span (click)="paginationPageButtonClicked(currentPage + 1)" [hidden]="currentPage >= pagesCount() - 1">{{currentPage + 1}}</span>
-                  <span (click)="paginationPageButtonClicked(currentPage + 2)" [hidden]="currentPage >= pagesCount() - 2">{{currentPage + 2}}</span>
-                  <span (click)="paginationPageButtonClicked(currentPage + 3)" [hidden]="currentPage !== 0 ">{{currentPage + 4}}</span>
-                </li>
-                <li>
-                  <span (click)="paginationPageButtonClicked(currentPage+1)" [hidden]="currentPage === pagesCount()-1">NEXT &gt;</span>
-                </li>
-              </div>
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
   <div *ngIf="loadUserInfoButtonEnabled">
 
     <table class="customers">
@@ -107,8 +37,6 @@
       </tbody>
     </table>
   </div>
-  </div>
-  <client-info-form-component [output]=""></client-info-form-component>
+  <clients-list-form-component (editClient)="editClient($event)" *ngIf="loadClientInfoListButtonEnable"></clients-list-form-component>
+  <client-info-form-component [clientId]="editClientId" (onClose)="close($event)" *ngIf="clientInfoFormComponentEnable"></client-info-form-component>
 </div>
-</body>
-</html>
