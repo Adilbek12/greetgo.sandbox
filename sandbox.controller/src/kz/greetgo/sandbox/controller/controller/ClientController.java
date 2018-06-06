@@ -2,13 +2,9 @@ package kz.greetgo.sandbox.controller.controller;
 
 import kz.greetgo.depinject.core.Bean;
 import kz.greetgo.depinject.core.BeanGetter;
-import kz.greetgo.mvc.annotations.Mapping;
-import kz.greetgo.mvc.annotations.Par;
-import kz.greetgo.mvc.annotations.ToJson;
-import kz.greetgo.sandbox.controller.model.ClientDetail;
-import kz.greetgo.sandbox.controller.model.ClientRecords;
-import kz.greetgo.sandbox.controller.model.ClientToSave;
-import kz.greetgo.sandbox.controller.model.SortBy;
+import kz.greetgo.mvc.annotations.*;
+import kz.greetgo.mvc.core.RequestMethod;
+import kz.greetgo.sandbox.controller.model.*;
 import kz.greetgo.sandbox.controller.register.ClientRegister;
 import kz.greetgo.sandbox.controller.util.Controller;
 
@@ -22,38 +18,42 @@ public class ClientController implements Controller {
   public BeanGetter<ClientRegister> clientRegister;
 
   @ToJson
+  @MethodFilter(RequestMethod.GET)
   @Mapping("/detail")
   public ClientDetail detail(@Par("clientId") int clientId) {
-    return clientRegister.get().getClientDetail(clientId);
+    return clientRegister.get().get(clientId);
   }
 
   @ToJson
+  @MethodFilter(RequestMethod.POST)
   @Mapping("/save")
-  void save(@Par("clientToSave") ClientToSave clientToSave) {
-    clientRegister.get().saveClient(clientToSave);
+  public void create(@Par("clientToSave") @Json ClientToSave client) {
+    clientRegister.get().save(client);
   }
 
   @ToJson
+  @MethodFilter(RequestMethod.DELETE)
   @Mapping("/remove")
-  void remove(@Par("clientId") int clientId) {
-    clientRegister.get().removeClient(clientId);
+  public void remove(@Par("clientId") int clientId) {
+    clientRegister.get().remove(clientId);
   }
 
   @ToJson
-  @Mapping("/recordsCount")
-  int recordsCount() {
-    return clientRegister.get().getClientRecordsCount();
-  }
-
-  @ToJson
+  @MethodFilter(RequestMethod.GET)
   @Mapping("/records")
-  List<ClientRecords> records(@Par("from") int from, @Par("to") int to) {
-    return clientRegister.get().getClientRecords(from, to);
+  public List<ClientRecords> records(@Par("clientFilter") @Json ClientFilter filter) {
+    return clientRegister.get().getRecords(filter);
   }
 
   @ToJson
-  @Mapping("/sortedRecords")
-  List<ClientRecords> records(@Par("from") int from, @Par("to") int to, @Par("sortBy") SortBy sortBy) {
-    return clientRegister.get().getClientRecords(from, to, sortBy);
+  @MethodFilter(RequestMethod.GET)
+  @Mapping("/recordsCount")
+  public int recordsCount(@Par("clientFilter") @Json ClientFilter filter) {
+    return clientRegister.get().getRecordsCount(filter);
   }
+
+  @ToJson
+  @MethodFilter(RequestMethod.GET)
+  @Mapping("/getCharms")
+  public List<Charm> charms() { return clientRegister.get().getCharms(); }
 }

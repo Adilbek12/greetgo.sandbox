@@ -2,25 +2,28 @@ package kz.greetgo.sandbox.db.stand.model;
 
 import kz.greetgo.sandbox.controller.model.*;
 
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class ClientDot {
-  public int id;
+  public Integer id;
   public String name;
   public String surname;
   public String patronymic;
   public Gender gender;
   public Date birth_day;
-  public Charm charm;
-  public ClientAddress[] client_addr;
-  public ClientPhone[] client_phones;
-  public ClientAccount[] client_accounts;
+  public int charmId;
+  public ClientAddress addressFact;
+  public ClientAddress addressReg;
+  public ClientPhone homePhone;
+  public ClientPhone workPhone;
+  public ClientPhone mobilePhone;
+  public List<ClientAccount> accounts = new ArrayList<>();
 
   public ClientRecords toClientRecords () {
     ClientRecords clientRecords = new ClientRecords();
+    clientRecords.id = this.id;
     clientRecords.name = this.name;
     clientRecords.surname = this.surname;
     clientRecords.patronymic = this.patronymic;
@@ -33,40 +36,48 @@ public class ClientDot {
 
   public ClientDetail toClientDetail() {
     ClientDetail clientDetail = new ClientDetail();
+    clientDetail.id = this.id;
     clientDetail.name = this.name;
     clientDetail.surname = this.surname;
     clientDetail.patronymic = this.patronymic;
     clientDetail.birth_day = this.birth_day;
-    clientDetail.charm = this.charm;
-    clientDetail.clientAddresses = this.client_addr;
-    clientDetail.clientPhones = this.client_phones;
+    clientDetail.charmId = this.charmId;
+    clientDetail.addressFact = this.addressFact;
+    clientDetail.addressReg = this.addressReg;
+    clientDetail.homePhone = this.homePhone;
+    clientDetail.mobilePhone = this.mobilePhone;
+    clientDetail.workPhone = this.workPhone;
     clientDetail.gender = this.gender;
     return clientDetail;
   }
 
   private int getAge() {
-    LocalDate birth_day_local = birth_day.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    LocalDate current_date_local = (new Date()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    return Period.between(birth_day_local, current_date_local).getYears();
+    return (new Date()).getYear() - birth_day.getYear() + 1900;
   }
 
   private float getMiddleBalance() {
+    if (accounts.size() == 0) return 0;
     float middle_balance = 0;
-    for (ClientAccount account : client_accounts) middle_balance += account.money;
-    return middle_balance/client_accounts.length;
+    for (int i = 0; i < accounts.size(); i++)
+      middle_balance += accounts.get(i).money;
+    return middle_balance/accounts.size();
   }
 
   private float getMaxBalance() {
+    if (accounts.size() == 0) return 0;
     float max_balance = -1;
-    for (ClientAccount account : client_accounts)
-      if (account.money > max_balance) max_balance = account.money;
+    for (int i = 0; i < accounts.size(); i++)
+      if (accounts.get(i).money > max_balance) max_balance = accounts.get(i).money;
     return max_balance;
   }
 
   private float getMinBalance() {
-    float min_balance = -1;
-    for (ClientAccount account : client_accounts)
-      if (account.money < min_balance) min_balance = account.money;
+    if (accounts.size() == 0) return 0;
+    float min_balance = Integer.MAX_VALUE;
+    for (int i = 0; i < accounts.size(); i++)
+      if (accounts.get(i).money < min_balance) min_balance = accounts.get(i).money;
     return min_balance;
   }
+
+
 }

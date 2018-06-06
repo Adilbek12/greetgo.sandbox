@@ -1,19 +1,16 @@
-
-/* The Modal (background) */
 .modal {
-  display: block; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
+  display: block;
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.4);
 }
-
 .modal-content {
   background-color: #fefefe;
   margin: auto;
@@ -22,15 +19,11 @@
   width: 80%;
 }
 
-.red_star {
+.red-text {
   color: red;
 }
 
-td {
-  padding-left: 5px;
-}
-
-.custom_input {
+.custom-input {
   width: 100%;
   padding: 10px;
   margin: 5px 0 10px 0;
@@ -38,6 +31,10 @@ td {
   border: none;
   background: #f1f1f1;
   border-radius: 7px;
+}
+.custom-input:focus {
+  background-color: #ddd;
+  outline: none;
 }
 
 select {
@@ -49,17 +46,13 @@ select {
   border: none;
   background: #f1f1f1;
 }
-
-.custom_input:focus {
-  background-color: #ddd;
-  outline: none;
+td {
+  padding-left: 5px;
 }
-
 hr {
   border: 1px solid #f1f1f1;
   margin-bottom: 25px;
 }
-
 button {
   background-color: rgb(59,97,151);
   color: white;
@@ -71,17 +64,16 @@ button {
   width: 100%;
   opacity: 0.8;
 }
-
 button:hover {
   opacity:1;
 }
 
-.cancelbtn {
+.cancel-btn {
   padding: 14px 20px;
   background-color: red;
   width: 100%;
 }
-.cancelbtn, .signupbtn {
+.cancel-btn, .sign-up-btn {
   float: left;
   width: 100%;
 }

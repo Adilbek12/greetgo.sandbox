@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Output} from "@angular/core";
 import {UserInfo} from "../../model/UserInfo";
 import {HttpService} from "../HttpService";
-import {PhoneType} from "../../model/PhoneType";
 
 
 @Component({
@@ -16,41 +15,39 @@ export class MainFormComponent {
   userInfo: UserInfo | null = null;
 
   loadUserInfoButtonEnabled: boolean = false;
+  clientInfoFormComponentEnable: boolean = false;
   loadClientInfoListButtonEnable: boolean = false;
 
-  editClientId: number = -1;
-  clientInfoFormComponentEnable: boolean = false;
+  editClientId: number | null = null;
 
   constructor(private httpService: HttpService) {
     this.loadUserInfo();
   }
 
-  switchBetweenUserAndClient (client: boolean) {
+  switchBetweenUserAndClientButtonClicked (client: boolean) {
     this.loadUserInfoButtonEnabled = !client;
     this.loadClientInfoListButtonEnable = client;
   }
 
   loadUserInfo() {
-
     this.httpService.get("/auth/userInfo").toPromise().then(result => {
       this.userInfo = UserInfo.copy(result.json());
-      let phoneType: PhoneType | null = this.userInfo.phoneType;
-      console.log(phoneType);
     }, error => {
-      console.log(error);
       this.userInfo = null;
     });
   }
 
   openAddNewClientModal() {
-    this.editClientId = -1;
+    this.editClientId = null;
     this.clientInfoFormComponentEnable = true;
   }
 
-  close() {
-    this.editClientId = -1;
+  close(listEdited: boolean) {
+    this.editClientId = null;
     this.clientInfoFormComponentEnable = false;
-    this.switchBetweenUserAndClient(false);
+    if (listEdited==true) {
+      this.switchBetweenUserAndClientButtonClicked(false);
+    }
   }
 
   editClient(clientId: number) {

@@ -7,83 +7,169 @@
       </colgroup>
       <thead>
         <tr class="tr-head">
-          <th style="width: 50%"><h1>Новый клиент</h1></th>
-          <th style="width: 50%"><span *ngIf="wrongMessageEnable" class="red_star">* - Заполните все обязательные поля</span></th>
+          <th style="width: 50%">
+            <h1>
+              Новый клиент
+            </h1>
+          </th>
+          <th style="width: 50%">
+            <span *ngIf="wrongMessageEnable" class="red-text">
+              * - Заполните все обязательные поля
+            </span>
+          </th>
         </tr>
       </thead>
       <tbody>
-        <tr><td colspan="2"><hr></td></tr>
-        <tr>
-          <td colspan="1">
-            <label><b>Фамилия</b><span class="red_star">*</span></label>
-            <input [(ngModel)]="clientToSave.surname" class="custom_input" id="surname" name="surname" type="text" placeholder="Фамилия" required>
-          </td>
-          <td colspan="1">
-            <label><b>Имя</b><span class="red_star">*</span></label>
-            <input [(ngModel)]="clientToSave.name" class="custom_input"  id="name" type="text" placeholder="Имя" required>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label><b>Отчество</b></label>
-            <input [(ngModel)]="clientToSave.patronymic" class="custom_input" id="patronymic" type="text" placeholder="Отчество" required>
-          </td>
-          <td>
-            <label><b>День рождения</b><span class="red_star">*</span></label>
-            <input [(ngModel)]="clientToSave.birth_day" class="custom_input" id="birth_day" type="date" placeholder="Возраст" max="2012-12-12" required>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label><b>Пол</b><span class="red_star">*</span></label><br>
-            <label>Male: &nbsp;
-              <input (click)="genderSelected(0)" id="male" type="radio" name="gender" value="male"/></label>
-            <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Female:&nbsp;
-              <input (click)="genderSelected(1)" id="female" type="radio" name="gender" value="female"/></label>
-          </td>
-          <td>
-            <label><b>Характер</b><span class="red_star">*</span></label>
-            <p>
-              <select id="charm">
-                <option *ngFor="let charm of charms" value="{{charm}}">{{charm.name}}</option>
-              </select>
-            </p>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label><b>Адрес регистрации</b><span class="red_star">*</span></label>
-            <input [(ngModel)]="clientToSave.addressReg.street" class="custom_input" id="ra_street" type="text" placeholder="Улица" required>
-            <input [(ngModel)]="clientToSave.addressReg.house" class="custom_input" id="ra_house" type="text" placeholder="Дом" required>
-            <input [(ngModel)]="clientToSave.addressReg.flat"  class="custom_input" id="ra_flat" type="text" placeholder="Квартира" required>
-          </td>
-          <td>
-            <label><b>Адрес проживания</b></label>
-            <input [(ngModel)]="clientToSave.addressFact.street" class="custom_input" id="ha_street" type="text" placeholder="Улица" required>
-            <input [(ngModel)]="clientToSave.addressFact.house"  class="custom_input" id="ha_house" type="text" placeholder="Дом" required>
-            <input [(ngModel)]="clientToSave.addressFact.flat"   class="custom_input" id="ha_flat" type="text" placeholder="Квартира" required>
-          </td>
-        </tr>
+
         <tr>
           <td colspan="2">
-            <label><b>Телефоны</b><span class="red_star">*</span>(один мобильный обязателен)</label>
+            <hr>
           </td>
         </tr>
+
+        <tr>
+          <td colspan="1">
+            <label>
+              <b>
+                Фамилия
+              </b>
+              <span class="red-text">
+                *
+              </span>
+            </label>
+            <input [(ngModel)]="clientToSave.surname" class="custom-input" id="surname" name="surname" type="text" placeholder="Фамилия" required>
+          </td>
+
+          <td colspan="1">
+            <label>
+              <b>
+                Имя
+              </b>
+              <span class="red-text">*</span></label>
+            <input [(ngModel)]="clientToSave.name" class="custom-input"  id="name" type="text" placeholder="Имя" required>
+          </td>
+        </tr>
+
         <tr>
           <td>
-            <input [(ngModel)]="clientToSave.homePhone.number" class="custom_input" id="home_phone" type="text" placeholder="Домашний" required>
-            <input [(ngModel)]="clientToSave.workPhone.number" class="custom_input" id="work_phone" type="text" placeholder="Рабочий" required>
-            <input [(ngModel)]="clientToSave.mobilePhone.number" class="custom_input" id="mobile_phone1" type="text" placeholder="Мобильный" required>
+            <label>
+              <b>
+                Отчество
+              </b>
+            </label>
+            <input [(ngModel)]="clientToSave.patronymic" class="custom-input" id="patronymic" type="text" placeholder="Отчество" required>
+          </td>
+
+          <td>
+            <label>
+              <b>
+                День рождения
+              </b>
+              <span class="red-text">*</span></label>
+            <input value="{{clientToSave.birth_day | date:'yyyy-MM-dd'}}" (blur)="setBDate($event.target.value)" format="dd/MM/yyyy" class="custom-input" id="birth_day" type="date" placeholder="Возраст" max="2012-12-12" required>
           </td>
         </tr>
+
+        <tr>
+          <td>
+            <label>
+              <b>
+                Пол
+              </b>
+              <span class="red-text">
+                *
+              </span>
+            </label>
+            <br>
+            <label>
+              <input type="radio" [(ngModel)]="clientToSave.gender" value="MALE">
+              MALE
+            </label>
+            <label>
+              <input type="radio" [(ngModel)]="clientToSave.gender" value="FEMALE">
+              FEMALE
+            </label>
+          </td>
+
+          <td>
+            <label>
+              <b>
+                Характер
+              </b>
+              <span class="red-text">
+                *
+              </span>
+            </label>
+            <select [(ngModel)]="clientToSave.charmId">
+              <option *ngFor="let charm of charms" value="{{charm.id}}">
+                {{charm.name}}
+              </option>
+            </select>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <label>
+              <b>
+                Адрес регистрации
+              </b>
+              <span class="red-text">
+                *
+              </span>
+            </label>
+            <input [(ngModel)]="clientToSave.addressReg.street" class="custom-input" id="ra_street" type="text" placeholder="Улица" required>
+            <input [(ngModel)]="clientToSave.addressReg.house" class="custom-input" id="ra_house" type="text" placeholder="Дом" required>
+            <input [(ngModel)]="clientToSave.addressReg.flat" class="custom-input" id="ra_flat" type="text" placeholder="Квартира" required>
+          </td>
+
+          <td>
+            <label>
+              <b>
+                Адрес проживания
+              </b>
+            </label>
+            <input [(ngModel)]="clientToSave.addressFact.street" class="custom-input" id="ha_street" type="text" placeholder="Улица" required>
+            <input [(ngModel)]="clientToSave.addressFact.house" class="custom-input" id="ha_house" type="text" placeholder="Дом" required>
+            <input [(ngModel)]="clientToSave.addressFact.flat" class="custom-input" id="ha_flat" type="text" placeholder="Квартира" required>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <label>
+              <b>
+                Телефоны
+              </b>
+              <span class="red-text">
+                *
+              </span>
+              (один мобильный обязателен)
+            </label>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <input [(ngModel)]="clientToSave.homePhone.number" class="custom-input" id="home_phone" type="text" placeholder="Домашний" required>
+            <input [(ngModel)]="clientToSave.workPhone.number" class="custom-input" id="work_phone" type="text" placeholder="Рабочий" required>
+            <input [(ngModel)]="clientToSave.mobilePhone.number" class="custom-input" id="mobile_phone1" type="text" placeholder="Мобильный" required>
+          </td>
+        </tr>
+
       </tbody>
+
       <tfoot>
         <tr>
           <td>
-            <button type="button" class="cancelbtn" (click)="close()">Заткрыть</button>
+            <button type="button" class="cancel-btn" (click)="closeButtonClicked(false)">
+              Заткрыть
+            </button>
           </td>
           <td>
-            <button type="submit" class="signupbtn" (click)="add()">Добавить</button>
+            <button type="submit" class="sign-up-btn" (click)="saveButtonClicked()">
+              Добавить
+            </button>
           </td>
         </tr>
       </tfoot>

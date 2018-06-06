@@ -1,5 +1,4 @@
 import {Gender} from "./Gender";
-import {Charm} from "./Charm";
 import {ClientAddress} from "./ClientAddress";
 import {ClientPhone} from "./ClientPhone";
 
@@ -10,7 +9,7 @@ export class ClientDetail {
   public patronymic: string;
   public gender: Gender;
   public birth_day: Date;
-  public charm: Charm;
+  public charmId: number;
   public addressFact: ClientAddress;
   public addressReg: ClientAddress;
   public homePhone: ClientPhone;
@@ -24,7 +23,7 @@ export class ClientDetail {
     this.patronymic = o.patronymic;
     this.gender = o.gender;
     this.birth_day = o.birth_day;
-    this.charm = o.charm;
+    this.charmId = o.charmId;
     this.addressFact = o.addressFact;
     this.addressReg = o.addressReg;
     this.homePhone = o.homePhone;

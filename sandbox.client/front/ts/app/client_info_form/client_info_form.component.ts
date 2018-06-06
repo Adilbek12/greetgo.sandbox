@@ -2,18 +2,15 @@ import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {HttpService} from "../HttpService";
 import {ClientToSave} from "../../model/ClientToSave";
 import {Charm} from "../../model/Charm";
-import {Gender} from "../../model/Gender";
 
 @Component({
   selector: 'client-info-form-component',
   template: require('./client_info_form.component.html'),
   styles: [require('./client_info_form.component.css')],
 })
-
 export class ClientInfoFormComponent implements OnInit{
-
   @Input() clientId: number;
-  @Output() onClose = new EventEmitter<void>();
+  @Output() onClose = new EventEmitter<boolean>();
 
   charms: Array<Charm> = new Array<Charm>();
   wrongMessageEnable: boolean = false;
@@ -24,31 +21,22 @@ export class ClientInfoFormComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    console.log("NG ON INIT | CLIENT TO SAVE ID= " + this.clientId);
-    if (this.clientId != -1) {
-      this.httpService.post("/client/get", {"clientId": this.clientId}).toPromise().then(result => {
+    if (this.clientId != null) {
+      let clientId = this.clientId as number;
+      this.httpService.get("/client/detail", {"clientId": clientId}).toPromise().then(result => {
         this.clientToSave = ClientToSave.copy(result.json());
+        console.log(this.clientToSave);
       })
     }
     else
       this.clientToSave = new ClientToSave();
   }
 
-  genderSelected(selectedIndex: number) {
-    switch (selectedIndex) {
-      case 1:
-        this.clientToSave.gender = Gender.FEMALE;
-        break;
-      case 0:
-        this.clientToSave.gender = Gender.MALE;
-        break;
-    }
-  }
-
   loadCharms() {
     this.httpService.get("/client/getCharms").toPromise().then(result => {
       for (let res of result.json())
         this.charms.push(Charm.copy(res));
+      console.log(this.charms);
     })
   }
 
@@ -72,32 +60,30 @@ export class ClientInfoFormComponent implements OnInit{
       this.checkData(this.clientToSave.homePhone.number);
   }
 
-  charmSelected() {
-    console.log("CHARM SELECTED!");
-  }
-
-  add() {
-    console.log("CHECK!");
+  saveButtonClicked () {
     if (this.checkClient()) {
-      console.log("SUCCESS!");
       this.wrongMessageEnable = false;
       this.saveClient();
     }
     else {
-      console.log("FAILED!");
       this.wrongMessageEnable = true;
     }
   }
 
   saveClient() {
+    console.log("CLIENT TO SAVE="+this.clientToSave);
     this.httpService.post("/client/save", {
       "clientToSave": JSON.stringify(this.clientToSave)
     }).toPromise().then(result => {
-      this.close()
+      this.onClose.emit(true);
     })
   }
 
-  close() {
-    this.onClose.emit();
+  closeButtonClicked(clientSaved: boolean) {
+    this.onClose.emit(clientSaved);
+  }
+
+  setBDate(dateText) {
+    this.clientToSave.birth_day = new Date(dateText);
   }
 }

@@ -1,5 +1,4 @@
 import {Gender} from "./Gender";
-import {Charm} from "./Charm";
 import {ClientAddress} from "./ClientAddress";
 import {ClientPhone} from "./ClientPhone";
 
@@ -10,7 +9,7 @@ export class ClientToSave {
   public patronymic: string;
   public gender: Gender;
   public birth_day: Date;
-  public charm: Charm;
+  public charmId: number;
   public addressFact: ClientAddress = new ClientAddress();
   public addressReg: ClientAddress = new ClientAddress();
   public homePhone: ClientPhone = new ClientPhone();
@@ -23,8 +22,8 @@ export class ClientToSave {
     this.name = o.name;
     this.patronymic = o.patronymic;
     this.gender = o.gender;
-    this.birth_day = o.birth_day;
-    this.charm = o.charm;
+    this.birth_day = new Date(o.birth_day);
+    this.charmId = o.charmId;
     this.addressFact = o.addressFact;
     this.addressReg = o.addressReg;
     this.homePhone = o.homePhone;

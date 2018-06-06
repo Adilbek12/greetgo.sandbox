@@ -2,75 +2,80 @@ package kz.greetgo.sandbox.stand.stand_register_impls;
 
 import kz.greetgo.depinject.core.Bean;
 import kz.greetgo.depinject.core.BeanGetter;
-import kz.greetgo.sandbox.controller.model.ClientDetail;
-import kz.greetgo.sandbox.controller.model.ClientRecords;
-import kz.greetgo.sandbox.controller.model.ClientToSave;
-import kz.greetgo.sandbox.controller.model.SortBy;
+import kz.greetgo.sandbox.controller.model.*;
 import kz.greetgo.sandbox.controller.register.ClientRegister;
 import kz.greetgo.sandbox.db.stand.beans.StandDb;
 import kz.greetgo.sandbox.db.stand.model.ClientDot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 @Bean
 public class ClientRegisterStand implements ClientRegister {
 
-  private BeanGetter<StandDb> db;
+  public BeanGetter<StandDb> db;
 
   @Override
-  public ClientDetail getClientDetail(int clientId) {
+  public ClientDetail get(int clientId) {
     ClientDot clientDot = getClient(clientId);
     if (clientDot == null) return null;
     else return clientDot.toClientDetail();
   }
 
   @Override
-  public void saveClient(ClientToSave clientToSave) {
+  public void save(ClientToSave clientToSave) {
     ClientDot clientDot;
-    if (clientToSave.id == -1) clientDot = new ClientDot();
+    if (clientToSave.id == null) {
+      clientDot = new ClientDot();
+      db.get().clientsStorage.add(clientDot);
+      clientDot.id = db.get().clientsStorage.size();
+    }
     else clientDot = getClient(clientToSave.id);
     assert clientDot != null;
-    clientDot.name = clientToSave.name;
-    clientDot.surname = clientToSave.surname;
-    clientDot.patronymic = clientToSave.patronymic;
+    clientDot.name = clientToSave.name == null ? "" : clientToSave.name;
+    clientDot.surname = clientToSave.surname == null ? "" : clientToSave.surname;
+    clientDot.patronymic = clientToSave.patronymic == null ? "" : clientToSave.patronymic;
     clientDot.gender = clientToSave.gender;
     clientDot.birth_day = clientToSave.birth_day;
-    clientDot.client_addr = clientToSave.clientAddresses;
-    clientDot.client_phones = clientToSave.clientPhones;
-    clientDot.charm = clientToSave.charm;
+    clientDot.addressFact = clientToSave.addressFact;
+    clientDot.addressReg = clientToSave.addressReg;
+    clientDot.homePhone = clientToSave.homePhone;
+    clientDot.workPhone = clientToSave.workPhone;
+    clientDot.mobilePhone = clientToSave.mobilePhone;
+    clientDot.charmId = clientToSave.charmId;
   }
 
   @Override
-  public void removeClient(int clientId) {
+  public void remove(int clientId) {
     List<ClientDot> clientDots = db.get().clientsStorage;
-    clientDots.remove(getClient(clientId));
+    for (int i = 0; i < clientDots.size(); i++)
+      if (clientDots.get(i).id == clientId) clientDots.remove(i);
   }
 
   @Override
-  public int getClientRecordsCount() {
-    List<ClientDot> clientDots = db.get().clientsStorage;
-    return clientDots.size();
-  }
-
-  @Override
-  public List<ClientRecords> getClientRecords(int from, int to) {
+  public List<ClientRecords> getRecords(ClientFilter clientFilter) {
     List<ClientDot> temp = db.get().clientsStorage;
     List<ClientRecords> clientRecords = new ArrayList<>();
-    for (int i = from; i<=to; i++)
-      if (i >= temp.size()) break;
-      else clientRecords.add(temp.get(i).toClientRecords());
-    return clientRecords;
-  }
 
-  @Override
-  public List<ClientRecords> getClientRecords(int from, int to, SortBy sortBy) {
-    List<ClientDot> temp = db.get().clientsStorage;
-    List<ClientRecords> clientRecords = new ArrayList<>();
-    for (ClientDot clientDot : temp) clientRecords.add(clientDot.toClientRecords());
+    for (ClientDot clientDot : temp) {
+      if (clientFilter.fio != null) {
+        if ((clientDot.name.contains(clientFilter.fio))
+          || (clientDot.surname.contains(clientFilter.fio))
+          || (clientDot.patronymic.contains(clientFilter.fio)))
+          clientRecords.add(clientDot.toClientRecords());
+      } else {
+        clientRecords.add(clientDot.toClientRecords());
+      }
+    }
+
     Comparator<ClientRecords> comparator = null;
-    switch (sortBy) {
+    if (clientFilter.sortBy != null)
+    switch (clientFilter.sortBy) {
+      case NONE:
+        comparator = null;
+        break;
       case NAME:
         comparator = Comparator.comparing(o -> o.name);
         break;
@@ -93,11 +98,48 @@ public class ClientRegisterStand implements ClientRegister {
         comparator = Comparator.comparing(o -> o.max_balance);
         break;
     }
-    clientRecords.sort(comparator);
-    return clientRecords;
+    if (comparator != null) clientRecords.sort(comparator);
+
+    if (clientFilter.sortDirection != null)
+    if (clientFilter.sortDirection == SortDirection.DESCENDING) Collections.reverse(clientRecords);
+
+    if (clientFilter.to < 0) clientFilter.to = 0;
+    if (clientFilter.from < 0) clientFilter.from = 0;
+
+    if (clientFilter.to > clientRecords.size()) clientFilter.to = clientRecords.size();
+    if (clientFilter.from > clientRecords.size()) clientFilter.from = clientRecords.size();
+
+    return clientRecords.subList(clientFilter.from, clientFilter.to);
+  }
+
+  @Override
+  public int getRecordsCount(ClientFilter clientFilter) {
+    List<ClientDot> temp = db.get().clientsStorage;
+    List<ClientRecords> clientRecords = new ArrayList<>();
+
+    for(ClientDot clientDot : temp) {
+      if (clientFilter != null && clientFilter.fio != null) {
+        if ((clientDot.name.contains(clientFilter.fio))
+          || (clientDot.surname.contains(clientFilter.fio))
+          || (clientDot.patronymic.contains(clientFilter.fio))) {
+            clientRecords.add(clientDot.toClientRecords());
+        }
+      }
+      else {
+        clientRecords.add(clientDot.toClientRecords());
+      }
+    }
+
+    return clientRecords.size();
+  }
+
+  @Override
+  public List<Charm> getCharms() {
+    return db.get().charms;
   }
 
   private ClientDot getClient(int clientId) {
+
     List<ClientDot> clientDots = db.get().clientsStorage;
     for (ClientDot clientDot : clientDots)
       if (clientDot.id == clientId) return clientDot;

@@ -1,9 +1,8 @@
 import {Component, ElementRef, EventEmitter, Output, ViewChild} from "@angular/core";
 import {HttpService} from "../HttpService";
-import {Page} from "../../model/Page";
 import {ClientRecords} from "../../model/ClientRecords";
 import {SortBy} from "../../model/SortBy";
-import {PageParam} from "../../model/PageParam";
+import {ClientFilter} from "../../model/ClientFilter";
 import {SortDirection} from "../../model/SortDirection";
 
 @Component({
@@ -11,64 +10,78 @@ import {SortDirection} from "../../model/SortDirection";
   template: require('./clients_list_form.component.html'),
   styles: [require('./clients_list_form.component.css')],
 })
-
 export class ClientsListFormComponent {
-
   @Output() editClient = new EventEmitter<number>();
   @ViewChild('myModule') module: ElementRef;
   @ViewChild('searchInput') searchInput: ElementRef;
+  @ViewChild('numberOfItemInPageSelector') numberOfItemInPageSelector: ElementRef;
 
-  page: Page = new Page();
-  pageParam: PageParam = new PageParam();
+  clientRecordsCount: number = 1;
+  clientRecords: ClientRecords[] = new Array<ClientRecords>()
+  clientFilter: ClientFilter = new ClientFilter();
   currentPage: number = 1;
+
   sortIndex: number = -1;
   numberOfItemInPage: number = 10;
 
   constructor(private httpService: HttpService) {
-    this.loadClientRecordsList(this.currentPage);
+    this.loadRecordsCount();
   }
 
   loadClientRecordsList(page: number) {
+    if (page <= 0) return;
     this.currentPage = page;
-    this.pageParam.from = this.currentPage*this.numberOfItemInPage - this.numberOfItemInPage;
-    this.pageParam.to = this.currentPage*this.numberOfItemInPage;
+    this.clientFilter.from = this.currentPage*this.numberOfItemInPage - this.numberOfItemInPage;
+    this.clientFilter.to = this.currentPage*this.numberOfItemInPage;
     this.loadPage();
   }
 
-  paginationPageButtonClicked(page: number) {
+  pageChanged(page: number) {
     if (this.currentPage == page) return;
     this.loadClientRecordsList(page);
   }
 
   loadPage() {
-
-    this.httpService.post("/client/records", {
-      "page":JSON.stringify(this.pageParam)
+    this.httpService.get("/client/records", {
+      "clientFilter":JSON.stringify(this.clientFilter)
     }).toPromise().then(result => {
-      this.page = Page.copy(result.json());
+      this.clientRecords = new Array();
+      for (let res of result.json()) {
+        this.clientRecords.push(ClientRecords.copy(res));
+      }
+    })
+  }
+
+  loadRecordsCount() {
+    this.clientRecordsCount = 1;
+    this.httpService.get("/client/recordsCount", {
+      "clientFilter":JSON.stringify(this.clientFilter)
+    }).toPromise().then(result => {
+      this.clientRecordsCount = result.json();
+      this.loadClientRecordsList(this.currentPage);
     })
   }
 
   filterPage() {
     let search_text: string = this.searchInput.nativeElement.value;
-    if (search_text == "") this.pageParam.filter = null;
-    else this.pageParam.filter = search_text;
+    if (search_text == "") this.clientFilter.fio = null;
+    else this.clientFilter.fio = search_text;
     this.currentPage = 1;
-    this.loadClientRecordsList(this.currentPage);
+    this.loadRecordsCount();
   }
 
   sortPage(index: number) {
-
+    this.currentPage = 1;
     if (this.sortIndex == index) {
       this.sortIndex = index+100;
-      this.pageParam.sortDirection = SortDirection.DESCENDINGLY;
+      this.clientFilter.sortDirection = SortDirection.DESCENDING;
       this.loadPage();
       return;
     }
     else if (this.sortIndex == index+100) {
       this.sortIndex = -1;
-      this.pageParam.sortBy = SortBy.NONE;
-      this.pageParam.sortDirection = SortDirection.NONE;
+      this.clientFilter.sortBy = SortBy.NONE;
+      this.clientFilter.sortDirection = SortDirection.NONE;
       this.loadPage();
       return;
     }
@@ -90,27 +103,18 @@ export class ClientsListFormComponent {
     }
 
     this.sortIndex = index;
-    this.pageParam.sortDirection = SortDirection.ASCENDING;
-    this.pageParam.sortBy = sortBy;
+    this.clientFilter.sortDirection = SortDirection.ASCENDING;
+    this.clientFilter.sortBy = sortBy;
     this.loadPage();
   }
 
   pagesCount(): number {
-    let pagesCount = Math.ceil(this.page.pagesCount / this.numberOfItemInPage);
+    let pagesCount = Math.ceil(this.clientRecordsCount / this.numberOfItemInPage);
     if (this.currentPage > pagesCount) {
       this.currentPage = pagesCount;
       this.loadClientRecordsList(this.currentPage);
     }
     return pagesCount;
-  }
-
-  deleteClientInfoById (clientRecords: ClientRecords) {
-    let ID = clientRecords.id;
-    this.httpService.post("/client/remove", {
-      "clientId": ID
-    }).toPromise().then(() => {
-      this.loadPage();
-    });
   }
 
   range(from: number, to: number, step: number) {
@@ -123,12 +127,17 @@ export class ClientsListFormComponent {
     return rangeList;
   }
 
-  numberOfItemInPageSelected() {
-    this.numberOfItemInPage = +(document.getElementById("4324") as HTMLSelectElement).value;
-    this.loadClientRecordsList(this.currentPage);
+  deleteClientButtonClicked (clientRecords: ClientRecords) {
+    let ID = clientRecords.id;
+    this.httpService.delete("/client/remove", {
+      "clientId": ID
+    }).toPromise().then(() => {
+      this.loadPage();
+      this.loadRecordsCount();
+    });
   }
 
-  editClientButtonClicked(client: ClientRecords) {
-    this.editClient.emit(client.id);
+  editClientButtonClicked(clientId: number){
+    this.editClient.emit(clientId);
   }
 }

@@ -1,6 +1,5 @@
 package kz.greetgo.sandbox.controller.model;
 
-
 import java.util.Date;
 
 public class ClientAccount {

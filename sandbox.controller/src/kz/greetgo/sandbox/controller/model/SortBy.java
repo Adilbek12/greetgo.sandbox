@@ -1,6 +1,7 @@
 package kz.greetgo.sandbox.controller.model;
 
 public enum SortBy {
+  NONE,
   NAME,
   SURNAME,
   PATRONYMIC,
