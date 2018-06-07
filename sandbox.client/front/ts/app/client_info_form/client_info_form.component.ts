@@ -64,7 +64,6 @@ export class ClientInfoFormComponent implements OnInit{
   }
 
   saveButtonClicked () {
-    console.log(this.valid_input.);
     if (this.checkClient()) {
       this.wrongMessageEnable = false;
       //this.saveClient();

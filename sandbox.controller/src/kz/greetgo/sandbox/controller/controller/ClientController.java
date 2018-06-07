@@ -24,6 +24,7 @@ public class ClientController implements Controller {
     return clientRegister.get().get(clientId);
   }
 
+
   @ToJson
   @MethodFilter(RequestMethod.POST)
   @Mapping("/save")
