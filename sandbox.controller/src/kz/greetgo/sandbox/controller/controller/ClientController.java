@@ -46,6 +46,7 @@ public class ClientController implements Controller {
     return clientRegister.get().getRecords(filter);
   }
 
+
   @ToJson
   @MethodFilter(RequestMethod.GET)
   @Mapping("/recordsCount")
