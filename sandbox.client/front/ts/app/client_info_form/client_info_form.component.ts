@@ -28,6 +28,7 @@ export class ClientInfoFormComponent implements OnInit{
         console.log(this.clientToSave);
       })
     }
+
     else
       this.clientToSave = new ClientToSave();
   }
