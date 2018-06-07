@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChildren} from "@angular/core";
 import {HttpService} from "../HttpService";
 import {ClientToSave} from "../../model/ClientToSave";
 import {Charm} from "../../model/Charm";
@@ -11,6 +11,8 @@ import {Charm} from "../../model/Charm";
 export class ClientInfoFormComponent implements OnInit{
   @Input() clientId: number;
   @Output() onClose = new EventEmitter<boolean>();
+
+  @ViewChildren('valid_input') valid_input: QueryList<ElementRef>;
 
   charms: Array<Charm> = new Array<Charm>();
   wrongMessageEnable: boolean = false;
@@ -62,9 +64,10 @@ export class ClientInfoFormComponent implements OnInit{
   }
 
   saveButtonClicked () {
+    console.log(this.valid_input.);
     if (this.checkClient()) {
       this.wrongMessageEnable = false;
-      this.saveClient();
+      //this.saveClient();
     }
     else {
       this.wrongMessageEnable = true;

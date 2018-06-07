@@ -20,7 +20,6 @@
         </tr>
       </thead>
       <tbody>
-
         <tr>
           <td colspan="2">
             <hr>
@@ -37,7 +36,11 @@
                 *
               </span>
             </label>
-            <input [(ngModel)]="clientToSave.surname" class="custom-input" id="surname" name="surname" type="text" placeholder="Фамилия" required>
+            <div class="contain">
+              <input #valid_input [(ngModel)]="clientToSave.surname" class="custom-input valid_input" id="surname" name="valid_input" type="text" placeholder="Фамилия" pattern="[A-Z]*[a-z]*" required>
+              <span class="validity">
+              </span>
+            </div>
           </td>
 
           <td colspan="1">
@@ -46,7 +49,11 @@
                 Имя
               </b>
               <span class="red-text">*</span></label>
-            <input [(ngModel)]="clientToSave.name" class="custom-input"  id="name" type="text" placeholder="Имя" required>
+            <div class="contain">
+              <input #valid_input [(ngModel)]="clientToSave.name" class="custom-input valid_input"  id="name" type="text" name="valid_input" placeholder="Имя" pattern="[A-Z]*[a-z]*" required>
+              <span class="validity">
+              </span>
+            </div>
           </td>
         </tr>
 
@@ -57,7 +64,9 @@
                 Отчество
               </b>
             </label>
-            <input [(ngModel)]="clientToSave.patronymic" class="custom-input" id="patronymic" type="text" placeholder="Отчество" required>
+            <div class="contain">
+              <input [(ngModel)]="clientToSave.patronymic" class="custom-input" id="patronymic" type="text" placeholder="Отчество" required>
+            </div>
           </td>
 
           <td>
@@ -65,8 +74,15 @@
               <b>
                 День рождения
               </b>
-              <span class="red-text">*</span></label>
-            <input value="{{clientToSave.birth_day | date:'yyyy-MM-dd'}}" (blur)="setBDate($event.target.value)" format="dd/MM/yyyy" class="custom-input" id="birth_day" type="date" placeholder="Возраст" max="2012-12-12" required>
+              <span class="red-text">
+                *
+              </span>
+            </label>
+            <div class="contain">
+              <input #valid_input value="{{clientToSave.birth_day | date:'yyyy-MM-dd'}}" (blur)="setBDate($event.target.value)" format="dd/MM/yyyy" class="valid_input custom-input" id="birth_day" type="date" name="valid_input" placeholder="Возраст" max="2012-12-12" required>
+              <span class="validity">
+              </span>
+            </div>
           </td>
         </tr>
 
@@ -81,14 +97,16 @@
               </span>
             </label>
             <br>
-            <label>
-              <input type="radio" [(ngModel)]="clientToSave.gender" value="MALE">
-              MALE
-            </label>
-            <label>
-              <input type="radio" [(ngModel)]="clientToSave.gender" value="FEMALE">
-              FEMALE
-            </label>
+            <div>
+              <label>
+                Мужчина
+                <input type="radio" [(ngModel)]="clientToSave.gender" value="MALE" style="width: 30px">
+                Женщина
+                <input type="radio" [(ngModel)]="clientToSave.gender" value="FEMALE" style="width: 30px">
+              </label>
+              <span class="validity">
+              </span>
+            </div>
           </td>
 
           <td>
@@ -100,11 +118,15 @@
                 *
               </span>
             </label>
-            <select [(ngModel)]="clientToSave.charmId">
-              <option *ngFor="let charm of charms" value="{{charm.id}}">
-                {{charm.name}}
-              </option>
-            </select>
+            <div class="contain">
+              <select #valid_input class="valid_input" [(ngModel)]="clientToSave.charmId">
+                <option *ngFor="let charm of charms" value="{{charm.id}}">
+                  {{charm.name}}
+                </option>
+              </select>
+              <span class="validity">
+              </span>
+            </div>
           </td>
         </tr>
 
@@ -118,9 +140,21 @@
                 *
               </span>
             </label>
-            <input [(ngModel)]="clientToSave.addressReg.street" class="custom-input" id="ra_street" type="text" placeholder="Улица" required>
-            <input [(ngModel)]="clientToSave.addressReg.house" class="custom-input" id="ra_house" type="text" placeholder="Дом" required>
-            <input [(ngModel)]="clientToSave.addressReg.flat" class="custom-input" id="ra_flat" type="text" placeholder="Квартира" required>
+            <div class="contain">
+              <input #valid_input [(ngModel)]="clientToSave.addressReg.street" class="custom-input valid_input" id="ra_street" type="text" name="valid_input" placeholder="Улица" pattern="[A-Z]*[a-z]*[0-9]*" required>
+              <span class="validity">
+              </span>
+            </div>
+            <div class="contain">
+              <input #valid_input [(ngModel)]="clientToSave.addressReg.house" class="custom-input valid_input" id="ra_house" type="text" name="valid_input" placeholder="Дом" pattern="[A-Z]*[a-z]*[0-9]*" required>
+              <span class="validity">
+              </span>
+            </div>
+            <div class="contain">
+              <input #valid_input [(ngModel)]="clientToSave.addressReg.flat" class="custom-input valid_input" id="ra_flat" type="text" name="valid_input" placeholder="Квартира" pattern="[A-Z]*[a-z]*[0-9]*" required>
+              <span class="validity">
+              </span>
+            </div>
           </td>
 
           <td>
@@ -144,22 +178,31 @@
               <span class="red-text">
                 *
               </span>
-              (один мобильный обязателен)
+              (в виде xxx-xxx-xxxx)
             </label>
           </td>
         </tr>
 
         <tr>
           <td>
-            <input [(ngModel)]="clientToSave.homePhone.number" class="custom-input" id="home_phone" type="text" placeholder="Домашний" required>
-            <input [(ngModel)]="clientToSave.workPhone.number" class="custom-input" id="work_phone" type="text" placeholder="Рабочий" required>
-            <input [(ngModel)]="clientToSave.mobilePhone.number" class="custom-input" id="mobile_phone1" type="text" placeholder="Мобильный" required>
+            <div class="contain">
+              <input #valid_input [(ngModel)]="clientToSave.homePhone.number" class="custom-input valid_input" id="home_phone" type="text" name="valid_input" placeholder="Домашний" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+              <span class="validity">
+              </span>
+            </div>
+            <div class="contain">
+              <input #valid_input [(ngModel)]="clientToSave.workPhone.number" class="custom-input valid_input" id="work_phone" type="text" name="valid_input" placeholder="Рабочий" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+              <span class="validity">
+              </span>
+            </div>
+            <div class="contain">
+              <input #valid_input [(ngModel)]="clientToSave.mobilePhone.number" class="custom-input valid_input" id="mobile_phone1" type="text" name="valid_input" placeholder="Мобильный" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+              <span class="validity">
+              </span>
+            </div>
           </td>
         </tr>
 
-      </tbody>
-
-      <tfoot>
         <tr>
           <td>
             <button type="button" class="cancel-btn" (click)="closeButtonClicked(false)">
@@ -167,12 +210,12 @@
             </button>
           </td>
           <td>
-            <button type="submit" class="sign-up-btn" (click)="saveButtonClicked()">
+            <button type="submit" class="sign-up-btn valid_button" (click)="saveButtonClicked()">
               Добавить
             </button>
           </td>
         </tr>
-      </tfoot>
+      </tbody>
     </table>
   </div>
 </div>

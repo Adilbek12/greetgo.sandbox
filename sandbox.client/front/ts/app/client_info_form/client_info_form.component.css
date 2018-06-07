@@ -24,10 +24,8 @@
 }
 
 .custom-input {
-  width: 100%;
   padding: 10px;
   margin: 5px 0 10px 0;
-  display: inline-block;
   border: none;
   background: #f1f1f1;
   border-radius: 7px;
@@ -38,7 +36,8 @@
 }
 
 select {
-  width: 100%;
+  width: 90%;
+  outline: none;
   padding: 10px;
   height: 40px;
   margin: 5px 0 10px 0;
@@ -56,6 +55,7 @@ hr {
 button {
   background-color: rgb(59,97,151);
   color: white;
+  border-radius: 7px;
   outline: none;
   padding: 14px 20px;
   margin: 8px 0;
@@ -80,4 +80,42 @@ button:hover {
 
 .container {
   padding: 16px;
+}
+
+.contain {
+  width: 100%;
+}
+
+input {
+  width: 90%;
+}
+span{
+  width: 10%;
+}
+input + span {
+  padding-right: 30px;
+}
+input:invalid+span:after {
+  position: absolute; content: '✖';
+  padding-left: 5px;
+  color: #8b0000;
+}
+input:valid+span:after {
+  position: absolute;
+  padding-left: 5px;
+  color: #009000;
+}
+
+select + span {
+  padding-right: 30px;
+}
+select:invalid+span {
+  position: absolute; content: '✖';
+  padding-left: 5px;
+  color: #8b0000;
+}
+select:valid+span:after {
+  position: absolute;
+  padding-left: 5px;
+  color: #009000;
 }
