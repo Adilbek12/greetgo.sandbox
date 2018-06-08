@@ -9,7 +9,7 @@
 
       <tr class="tr-head">
         <th class="no-select not-sort-th" (click)="sortPage(0)">
-          Name
+          Имя
           <span *ngIf="sortIndex==0">
             ▲
           </span>
@@ -19,7 +19,7 @@
         </th>
 
         <th class="no-select not-sort-th" (click)="sortPage(1)">
-          Surname
+          Фамилия
           <span *ngIf="sortIndex==1">
             ▲
           </span>
@@ -29,7 +29,7 @@
         </th>
 
         <th class="no-select not-sort-th" (click)="sortPage(2)">
-          Age
+          Возраст
           <span *ngIf="sortIndex==2">
             ▲
           </span>
@@ -39,7 +39,7 @@
         </th>
 
         <th class="no-select not-sort-th" (click)="sortPage(3)">
-          Balance
+          Баланс
           <span *ngIf="sortIndex==3">
             ▲
           </span>
@@ -49,7 +49,7 @@
         </th>
 
         <th class="no-select not-sort-th" (click)="sortPage(4)">
-          Max balance
+          Maк баланс
           <span *ngIf="sortIndex==4">
             ▲
           </span><span *ngIf="sortIndex==4+100">
@@ -58,7 +58,7 @@
         </th>
 
         <th class="no-select not-sort-th" (click)="sortPage(5)">
-          Min balance
+          Мин баланс
           <span *ngIf="sortIndex==5">
             ▲
           </span>
@@ -68,11 +68,11 @@
         </th>
 
         <th class="no-select not-sort-th" style="cursor: default;">
-          Delete
+          Удалить
         </th>
 
         <th class="no-select not-sort-th" style="cursor: default;">
-          Edit
+          Изменить
         </th>
       </tr>
 
@@ -134,7 +134,9 @@
           <div class="float_center">
             <div *ngIf="pagesCount()>1" class="pagination">
               <li>
-                <span class="no-select" (click)="pageChanged(currentPage-1)" [hidden]="currentPage<=1">&lt;PREV</span>
+                <span class="no-select" (click)="pageChanged(currentPage-1)" [hidden]="currentPage<=1">
+                  &lt;ПРЕДЫДУЩИИ
+                </span>
               </li>
 
               <li>
@@ -165,7 +167,7 @@
 
               <li>
                 <span class="no-select" (click)="pageChanged(currentPage+1)" [hidden]="currentPage === pagesCount()">
-                  NEXT&gt;
+                  СЛЕДУЮЩИЙ&gt;
                 </span>
               </li>
             </div>
