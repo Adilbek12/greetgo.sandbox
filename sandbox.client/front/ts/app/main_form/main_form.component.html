@@ -9,9 +9,6 @@
     <button [ngClass]="{active:loadClientInfoListButtonEnable}" (click)="switchBetweenUserAndClientButtonClicked(true)" >
       Данные клентов
     </button>
-    <button *ngIf="loadClientInfoListButtonEnable" (click)="openAddNewClientModal()">
-      Добавить новый клент
-    </button>
   </div>
 
   <div *ngIf="loadUserInfoButtonEnabled">

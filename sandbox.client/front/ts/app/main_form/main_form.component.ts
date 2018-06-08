@@ -32,14 +32,7 @@ export class MainFormComponent {
   loadUserInfo() {
     this.httpService.get("/auth/userInfo").toPromise().then(result => {
       this.userInfo = UserInfo.copy(result.json());
-    }, error => {
-      this.userInfo = null;
     });
-  }
-
-  openAddNewClientModal() {
-    this.editClientId = null;
-    this.clientInfoFormComponentEnable = true;
   }
 
   close(listEdited: boolean) {
@@ -50,7 +43,7 @@ export class MainFormComponent {
     }
   }
 
-  editClient(clientId: number) {
+  editClient(clientId: number | null) {
     this.editClientId = clientId;
     this.clientInfoFormComponentEnable = true;
   }

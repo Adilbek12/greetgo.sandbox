@@ -24,7 +24,6 @@ export class ClientInfoFormComponent implements OnInit{
 
   constructor(private httpService: HttpService) {
     this.loadCharms();
-
   }
 
   ngOnInit(): void {
@@ -34,7 +33,7 @@ export class ClientInfoFormComponent implements OnInit{
       let clientId = this.clientId as number;
       this.httpService.get("/client/detail", {"clientId": clientId}).toPromise().then(result => {
         this.clientToSave = ClientToSave.copy(result.json());
-        console.log(this.clientToSave);
+        this.serializeAllNumber();
       })
     }
     else {
@@ -53,39 +52,56 @@ export class ClientInfoFormComponent implements OnInit{
     })
   }
 
-  checkClient(): boolean {
-    let re1 = /^[a-zA-Z_]*$/;
-    let re2 = /^[a-zA-Z0-9_]*$/;
-    return this.checkData(this.clientToSave.addressReg) &&
-      this.clientToSave.addressReg.house.match(re2) &&
-      this.clientToSave.addressReg.flat.match(re2) &&
-      this.clientToSave.addressReg.street.match(re2) &&
-      this.checkClientPhones() &&
-      this.checkData(this.clientToSave.name) &&
-      this.clientToSave.name.match(re1) != null &&
-      this.checkData(this.clientToSave.surname) &&
-      this.clientToSave.surname.match(re1) != null &&
-      this.checkData(this.clientToSave.birth_day) &&
-      this.checkData(this.clientToSave.gender) &&
-      this.checkClientPhones();
+  checkClientData(): boolean {
+    if (this.checkClientPhones() &&
+      this.checkClientText() &&
+      this.checkClientAddresse() &&
+      !this.isEmpty(this.clientToSave.birth_day) &&
+      !this.isEmpty(this.clientToSave.gender)) {
+      this.unSerializeAllNumbers();
+      return true;
+    }
+    return false;
   }
 
-  checkData(element: any): boolean {
-    return (element != null && element != "")
+  checkClientAddresse(): boolean{
+    if (this.isEmpty(this.clientToSave.addressReg)) return false;
+    let re = /^[a-zA-Z0-9_]+$/;
+    return this.isCorrect(re, this.clientToSave.addressReg.street) &&
+      this.isCorrect(re, this.clientToSave.addressReg.house) &&
+      this.isCorrect(re, this.clientToSave.addressReg.flat);
+  }
+
+  checkClientText(): boolean {
+    let re = /^[a-zA-Z_]*$/;
+    return this.isCorrect(re, this.clientToSave.name)
+      && this.isCorrect(re, this.clientToSave.surname);
   }
 
   checkClientPhones(): boolean {
-    let re = /^[0-9]{8}[0-9]*$/;
-    return this.checkData(this.clientToSave.mobilePhone.number) &&
-      this.clientToSave.mobilePhone.number.match(re)!=null &&
-      this.checkData(this.clientToSave.workPhone.number) &&
-      this.clientToSave.workPhone.number.match(re)!=null &&
-      this.checkData(this.clientToSave.homePhone.number) &&
-      this.clientToSave.homePhone.number.match(re)!=null;
+    let re = /^[0-9]-[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}$/;
+    return this.isCorrect(re, this.clientToSave.homePhone.number)
+      && this.isCorrect(re, this.clientToSave.workPhone.number)
+      && this.isCorrect(re, this.clientToSave.mobilePhone.number);
+  }
+
+  isCorrect(re: RegExp, text: string): boolean {
+    if (this.isEmpty(text)) return false;
+    return text.match(re) != null;
+  }
+
+  unSerializeAllNumbers() {
+    this.clientToSave.homePhone.number = this.unSerializeNumber(this.clientToSave.homePhone.number);
+    this.clientToSave.mobilePhone.number = this.unSerializeNumber(this.clientToSave.mobilePhone.number);
+    this.clientToSave.workPhone.number = this.unSerializeNumber(this.clientToSave.workPhone.number);
+  }
+
+  isEmpty(element: any): boolean {
+    return (element == null || element == "")
   }
 
   saveButtonClicked () {
-    if (this.checkClient()) {
+    if (this.checkClientData()) {
       this.wrongMessageEnable = false;
       this.saveClient();
     }
@@ -121,7 +137,66 @@ export class ClientInfoFormComponent implements OnInit{
     if(mm.length<10){
       mm='0'+mm
     }
-
     this.birthDayInput.nativeElement.setAttribute("max", yyyy+'-'+mm+'-'+dd);
+  }
+
+  serializeInputText(id: number) {
+    switch (id) {
+      case 0:
+        this.clientToSave.name = this.serializeText(this.clientToSave.name);
+        break;
+      case 1:
+        this.clientToSave.surname = this.serializeText(this.clientToSave.surname);
+        break;
+      case 2:
+        this.clientToSave.patronymic = this.serializeText(this.clientToSave.patronymic);
+        break;
+    }
+  }
+
+  serializeText(clientText: string | null): string {
+    if (clientText == null) return "";
+    let text = clientText.replace(/[\W\s\._\-\d]+/g, '');
+    return text;
+  }
+
+  serializeAllNumber() {
+    if (this.clientToSave.homePhone.number != null) this.serializeInputNumber(0);
+    if (this.clientToSave.workPhone.number) this.serializeInputNumber(1);
+    if (this.clientToSave.mobilePhone.number) this.serializeInputNumber(2);
+  }
+
+  serializeInputNumber(id: number) {
+    switch (id) {
+      case 0:
+        this.clientToSave.homePhone.number = this.serializeNumber(this.clientToSave.homePhone.number);
+        break;
+      case 1:
+        this.clientToSave.workPhone.number = this.serializeNumber(this.clientToSave.workPhone.number);
+        break;
+      case 2:
+        this.clientToSave.mobilePhone.number = this.serializeNumber(this.clientToSave.mobilePhone.number);
+        break;
+    }
+  }
+
+  serializeNumber(clientNumber: string | null): string {
+    if (clientNumber == null) return "";
+
+    let number = clientNumber.replace(/[\W\s\._\-a-zA-Z]+/g, '');
+
+    if (number.length > 11) number = number.substr(0, 12);
+    let split = 4;
+    let chunk = [];
+    for (var i = 0, len = number.length; i < len; i += split) {
+      split = ( i <= 0 ) ? 1 : ((i >= 7) ? 2 : 3);
+      chunk.push( number.substr( i, split ) );
+    }
+    return chunk.join("-").toUpperCase();
+  }
+
+  unSerializeNumber(number: string | null): string {
+    if (number == null) return "";
+    return number.replace(/[($)\W\s\._\-]+/g, '');
   }
 }

@@ -137,7 +137,7 @@ export class ClientsListFormComponent {
     });
   }
 
-  editClientButtonClicked(clientId: number){
+  editClientButtonClicked(clientId: number | null){
     this.editClient.emit(clientId);
   }
 }
